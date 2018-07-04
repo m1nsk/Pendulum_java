@@ -46,7 +46,7 @@ public class ServerPendulum extends NanoHTTPD {
                 + "\n"
                 + "<form action=\"\" method=\"post\" enctype=\"multipart/form-data\">\n"
                 + "    Select image to upload:\n"
-                + "    <input type=\"file\" name=\"img\" id=\"fileToUpload\">\n"
+                + "    <input type=\"file\" name=\"img\" id=\"fileToUpload\" multiple>\n"
                 + "    <input type=\"submit\" value=\"Upload Image\" name=\"submit\">\n"
                 + "</form>\n"
                 + "\n"
