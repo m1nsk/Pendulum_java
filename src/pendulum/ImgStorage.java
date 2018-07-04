@@ -20,6 +20,7 @@ public class ImgStorage {
         this.xSize = xSize;
         this.ySize = ySize;
         imgMap = new HashMap<>();
+        imgMapBuffer = new HashMap<>();
         instructions = "";
     }
 
@@ -30,7 +31,7 @@ public class ImgStorage {
     public synchronized List<byte[]> getImg(String name) {
         if (!isBufferEmpty()) {
             imgMap = imgMapBuffer;
-            imgMapBuffer = null;
+            imgMapBuffer.clear();
         }
         List<byte[]> img = copyImg(name);
         return img;
