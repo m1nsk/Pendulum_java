@@ -14,7 +14,8 @@ import java.util.List;
 // import org.nanohttpd.NanoHTTPD;
 
 public class ServerPendulum extends NanoHTTPD {
-    ImgStorage imgStorage;
+    private ImgStorage imgStorage;
+    private final String imgName = "img";
 
     public ServerPendulum(ImgStorage imgStorage) throws IOException {
         super(8080);
@@ -46,7 +47,7 @@ public class ServerPendulum extends NanoHTTPD {
                 + "\n"
                 + "<form action=\"\" method=\"post\" enctype=\"multipart/form-data\">\n"
                 + "    Select image to upload:\n"
-                + "    <input type=\"file\" name=\"img\" id=\"fileToUpload\" multiple>\n"
+                + "    <input type=\"file\" name=\"" + imgName + "\" id=\"fileToUpload\" multiple>\n"
                 + "    <input type=\"submit\" value=\"Upload Image\" name=\"submit\">\n"
                 + "</form>\n"
                 + "\n"
@@ -64,7 +65,16 @@ public class ServerPendulum extends NanoHTTPD {
         } catch (ResponseException e1) {
             e1.printStackTrace();
         }
-        File file = new File(files.get("img"));
+        Map<String, File> fileMap = new HashMap<>();
+        for (int i = 0; i < files.size(); i++) {
+            String key = i == 0 ? imgName : imgName + i;
+            fileMap.put(key, new File(files.get(key)));
+        }
+        try {
+            imgStorage.setImgMapBuffer(fileMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return getLoadPage();
     }
 }
