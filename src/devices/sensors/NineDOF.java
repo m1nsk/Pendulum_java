@@ -1,15 +1,11 @@
 package devices.sensors;
 
-import devices.sensors.dataTypes.CircularArrayRing;
 import devices.sensors.dataTypes.TimestampedData3D;
-import devices.sensors.interfaces.Accelerometer;
-import devices.sensors.interfaces.Gyroscope;
-import devices.sensors.interfaces.Thermometer;
 
 /**
  * Created by MAWood on 17/07/2016.
  */
-public abstract class NineDOF implements Mpu9250Interface
+public abstract class NineDOF extends SensorPackage implements Mpu9250Interface
 {
     protected TimestampedData3D acc;
     protected TimestampedData3D gyr;
@@ -25,9 +21,9 @@ public abstract class NineDOF implements Mpu9250Interface
     protected float[] magScaling;
     protected float thermScaling;
 
-    protected NineDOF(int sampleRate, int sampleSize)
+    protected NineDOF(int sampleRate)
     {
-
+        super(sampleRate);
         accBias = new float[]{0,0,0};
         gyrBias = new float[]{0,0,0};
         magBias = new float[]{0,0,0};

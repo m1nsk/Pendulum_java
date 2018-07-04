@@ -1,64 +1,49 @@
 package devices.Protocol;
 
-import com.pi4j.wiringpi.Spi;
+import com.pi4j.io.spi.SpiDevice;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by MAWood on 17/07/2016.
  */
 public class Pi4SPIDevice implements ProtocolInterface
 {
-    private final int spiChannel;
-
+   private final SpiDevice device;
+   
+   
     public static int READ_CMD = 0x80;
 
-    public Pi4SPIDevice() {
-        this.spiChannel = 0;
-        Spi.wiringPiSPISetup(spiChannel, 1_000_000);
-    }
-
-    public Pi4SPIDevice(int spiChannel, int spiSpeed)
+    public Pi4SPIDevice(SpiDevice device)
     {
-        this.spiChannel = spiSpeed;
-        Spi.wiringPiSPISetup(spiChannel, spiSpeed);
+        this.device = device;
     }
 
     @Override
     public byte read(int address) throws IOException
     {
-        byte packet[] = new byte[2];
-        packet[0] = (byte) (address | READ_CMD);
-        packet[1] = 0b00000000;
-
-        Spi.wiringPiSPIDataRW(0, packet, 2);
-        return packet[0];
+        byte[] data = new byte[2];
+        data[0] = (byte)(address | READ_CMD);
+        byte[] result = device.write(data);
+        return result[1];
     }
 
     @Override
     public byte[] read(int address, int count) throws IOException
     {
-        byte packet[] = new byte[count];
-//        packet[0] = (byte) (address | READ_CMD);
-//        Spi.wiringPiSPIDataRW(spiChannel, packet);
-        for (int i = 0; i < count; i += 2) {
-            byte subPacket[] = new byte[2];
-            subPacket[0] = (byte) (address + i | READ_CMD);
-            subPacket[1] = 0b00000000;
-            Spi.wiringPiSPIDataRW(0, subPacket, 2);
-            System.arraycopy(subPacket, 0, packet, i, 2);
-        }
-        return packet;
+        byte[] result = new byte[count];
+        byte[] buffer = new byte[count + 1];
+        buffer[0] = (byte)(address | READ_CMD);
+        System.arraycopy(device.write(buffer), 1, result, 0, count);       
+        return result;
     }
 
     @Override
     public void write(int address, byte data) throws IOException
     {
-        byte packet[] = new byte[2];
-        packet[0] = (byte)address;  // register byte
-        packet[1] = data; // data byte
-
-        int result = Spi.wiringPiSPIDataRW(spiChannel, packet, 2);
-        
+        device.write((byte)address,data);
+//        System.out.println("address " + address + " data: " + data + " checked: " + read(address));
     }
 }
