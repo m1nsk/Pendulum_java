@@ -59,6 +59,9 @@ public class ImgStorage {
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale image
         bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = bImg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
 
         for (int i = 0; i < xSize; i++) { //covert image to byteArray list
             byte[] line = new byte[ySize * 4];
