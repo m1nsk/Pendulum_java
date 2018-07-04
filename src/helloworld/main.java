@@ -11,17 +11,19 @@ import com.github.dlopuch.apa102_java_rpi.Apa102Output;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
+import pendulum.ImgStorage;
 import server.ServerPendulum;
 
 
 public class main {
+    final static ImgStorage imgStorage = new ImgStorage(360, 100);
 
     final static int NUM_LEDS = 144;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Thread serverThread = new Thread(() -> {
             try {
-                new ServerPendulum();
+                new ServerPendulum(imgStorage);
             } catch (IOException ex) {
                 System.err.println("Couldn't start server:\n" + ex);
             }
@@ -48,7 +50,7 @@ public class main {
             while (System.currentTimeMillis() - start < 1000) {
                 counter++;
                 ahrs.imuLoop();
-                float angel = ahrs.getQ().multiply(vertQ).d;
+                float angel = ahrs.getQ().multiply(vertQ).getD();
                 Thread.sleep(5);
             }
             counter = 0;

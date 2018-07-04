@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
+import pendulum.ImgStorage;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -12,23 +14,32 @@ import java.util.List;
 // import org.nanohttpd.NanoHTTPD;
 
 public class ServerPendulum extends NanoHTTPD {
+    ImgStorage imgStorage;
 
-    public ServerPendulum() throws IOException {
+    public ServerPendulum(ImgStorage imgStorage) throws IOException {
         super(8080);
+        this.imgStorage = imgStorage;
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         System.out.println("\nRunning! Point your browsers to http://localhost:8080/ \n");
     }
 
-    public static void main(String[] args) {
-        try {
-            new ServerPendulum();
-        } catch (IOException ioe) {
-            System.err.println("Couldn't start server:\n" + ioe);
-        }
-    }
 
     @Override
     public Response serve(IHTTPSession session) {
+        switch (session.getMethod()) {
+            case GET:
+                return get(session);
+            case POST:
+                return post(session);
+        }
+        return getLoadPage();
+    }
+
+    private Response get(IHTTPSession session) {
+        return getLoadPage();
+    }
+
+    private Response getLoadPage() {
         String msg = "<!DOCTYPE html>\n"
                 + "<html>\n"
                 + "<body>\n"
@@ -41,19 +52,19 @@ public class ServerPendulum extends NanoHTTPD {
                 + "\n"
                 + "</body>\n"
                 + "</html>";
-        Map<String, List<String>> parms = session.getParameters();
-
-        if (session.getMethod() == Method.POST) {
-            Map<String, String> files = new HashMap<String, String>();
-            try {
-                session.parseBody(files);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (ResponseException e1) {
-                e1.printStackTrace();
-            }
-            File file = new File(files.get("img"));
-        }
         return newFixedLengthResponse(msg);
+    }
+
+    private Response post(IHTTPSession session) {
+        Map<String, String> files = new HashMap<String, String>();
+        try {
+            session.parseBody(files);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (ResponseException e1) {
+            e1.printStackTrace();
+        }
+        File file = new File(files.get("img"));
+        return getLoadPage();
     }
 }

@@ -2,7 +2,7 @@ package AHRS;
 
 public class Quaternion {
 
-    public float a, b, c, d;
+    private float a, b, c, d;
 
     public Quaternion(float a, float b, float c, float d) {
         this.a = a;
@@ -50,5 +50,37 @@ public class Quaternion {
         res.c = this.a * b.c - this.b * b.d + this.c * b.a + this.d * b.b;
         res.d = this.a * b.d + this.b * b.c - this.c * b.b + this.d * b.a;
         return res;
+    }
+
+    public float getA() {
+        return a;
+    }
+
+    public void setA(float a) {
+        this.a = a;
+    }
+
+    public float getB() {
+        return b;
+    }
+
+    public void setB(float b) {
+        this.b = b;
+    }
+
+    public float getC() {
+        return c;
+    }
+
+    public void setC(float c) {
+        this.c = c;
+    }
+
+    public float getD() {
+        return d;
+    }
+
+    public void setD(float d) {
+        this.d = d;
     }
 }
