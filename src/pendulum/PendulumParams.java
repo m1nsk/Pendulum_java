@@ -14,11 +14,29 @@ public class PendulumParams {
     private int displayFrequency = 300;
 
     public PendulumParams() {
+        try {
+            initParamFromResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initParamFromResources() {
         Locale locale = Locale.ENGLISH;
-        ResourceBundle myResources = ResourceBundle.getBundle("MyResources",
+        ResourceBundle myResources = ResourceBundle.getBundle("resources",
                 locale);
-        String string = myResources.getString("HelpKey");
-        System.out.println("HelpKey: " + string);
+        int ledNumT = Integer.parseInt(myResources.getString("ledNum"));
+        int sizeXT = Integer.parseInt(myResources.getString("sizeX"));
+        int sizeYT = Integer.parseInt(myResources.getString("sizeY"));
+        int spiAPA102SpeedT = Integer.parseInt(myResources.getString("spiAPA102Speed"));
+        int displayFrequencyT = Integer.parseInt(myResources.getString("displayFrequency"));
+
+        ledNum = ledNumT;
+        sizeX = sizeXT;
+        sizeY = sizeYT;
+        spiAPA102Speed = spiAPA102SpeedT;
+        displayFrequency = displayFrequencyT;
     }
 
     public int getLedNum() {
@@ -43,5 +61,9 @@ public class PendulumParams {
 
     public int getDisplayFrequency() {
         return displayFrequency;
+    }
+
+    public static void main(String[] args) {
+        new PendulumParams();
     }
 }

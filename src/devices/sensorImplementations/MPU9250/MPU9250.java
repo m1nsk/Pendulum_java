@@ -19,15 +19,13 @@ public class MPU9250 extends NineDOF {
 
     private final ProtocolInterface mpu9250;
 
-    public MPU9250(ProtocolInterface mpu9250, int sampleRate, int sampleSize) throws IOException, InterruptedException {
+    public MPU9250(ProtocolInterface mpu9250, int sampleRate) {
         super(sampleRate);
-        // get device
         this.mpu9250 = mpu9250;
     }
 
     public void initialize() throws IOException, InterruptedException {
-        selfTest();
-//        calibrateGyroAcc();
+//        selfTest();
         initMPU9250();
     }
     
@@ -227,16 +225,7 @@ public class MPU9250 extends NineDOF {
         therm = ((float) (short) ((rawData[0] << 8) | rawData[1]));  // Turn the MSB and LSB into a 16-bit value
     }
 
-    /**
-     * Reads the specified number of 16 bit Registers from a given device and
-     * address
-     *
-     * @param address - the start address for the read
-     * @param regCount - number of 16 bit registers to be read
-     * @return - an array of shorts (16 bit signed values) holding the registers
-     * Each registers is constructed from reading and combining 2 bytes, the
-     * first byte forms the more significant part of the register
-     */
+
     public short[] read16BitRegisters(ProtocolInterface device, int address, int regCount) {
         byte rawData[] = null;
         try {
