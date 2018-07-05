@@ -2,6 +2,9 @@ package pendulum;
 
 import com.pi4j.io.spi.SpiChannel;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 public class PendulumParams {
     private int ledNum = 100;
     private int sizeX = 360;
@@ -11,6 +14,11 @@ public class PendulumParams {
     private int displayFrequency = 300;
 
     public PendulumParams() {
+        Locale locale = Locale.ENGLISH;
+        ResourceBundle myResources = ResourceBundle.getBundle("MyResources",
+                locale);
+        String string = myResources.getString("HelpKey");
+        System.out.println("HelpKey: " + string);
     }
 
     public int getLedNum() {
