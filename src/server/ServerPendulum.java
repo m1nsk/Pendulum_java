@@ -1,17 +1,15 @@
 package server;
 
-import java.io.IOException;
-import java.util.Map;
-
 import fi.iki.elonen.NanoHTTPD;
 import pendulum.ImgStorage;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-// NOTE: If you're using NanoHTTPD >= 3.0.0 the namespace is different,
-//       instead of the above import use the following:
-// import org.nanohttpd.NanoHTTPD;
+import java.util.Map;
+
 
 public class ServerPendulum extends NanoHTTPD {
     private ImgStorage imgStorage;
@@ -57,21 +55,24 @@ public class ServerPendulum extends NanoHTTPD {
     }
 
     private Response post(IHTTPSession session) {
-        Map<String, String> files = new HashMap<String, String>();
+        Map<String, String> files = new HashMap<>();
         try {
             session.parseBody(files);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (ResponseException e1) {
-            e1.printStackTrace();
+        } catch (IOException | ResponseException e) {
+            e.printStackTrace();
         }
+
         Map<String, File> fileMap = new HashMap<>();
+        List<String> instructions = new ArrayList<>();
         for (int i = 0; i < files.size(); i++) {
             String key = i == 0 ? imgName : imgName + i;
-            fileMap.put(key, new File(files.get(key)));
+            File file = new File(files.get(key));
+            fileMap.put(file.getName(), file);
+            instructions.add(file.getName());
         }
+
         try {
-            imgStorage.setImgMapBuffer(fileMap);
+            imgStorage.loadData(fileMap, instructions);
         } catch (IOException e) {
             e.printStackTrace();
         }

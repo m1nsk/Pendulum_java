@@ -1,7 +1,6 @@
 package helloworld;
 
 import AHRS.AHRS;
-import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
 import devices.Protocol.Pi4SPIDevice;
@@ -18,16 +17,16 @@ import java.io.IOException;
 public class Pendulum {
 
     private static PendulumParams params = new PendulumParams();
-    private static ImgStorage imgStorage = new ImgStorage(params);
+    private static ImgStorage imgStorage = new ImgStorage(params.getSizeX(), params.getSizeY());
     private static ImgDisplay imgDisplay = new ImgDisplay();
-    private static PendulumStateMachine stateMachine = new PendulumStateMachine(params, imgDisplay, imgStorage);
+    private static PendulumStateMachine stateMachine = new PendulumStateMachine(imgDisplay, imgStorage, params.getSizeX(), params.getSizeY());
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Thread serverThread = new Thread(() -> serverThread());
         serverThread.setDaemon(true);
         serverThread.start();
 
-        imgDisplay.initDisplay(params);
+        imgDisplay.initDisplay(params.getSpiChannel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
 
         MPU9250 mpu9250 = new MPU9250(
                 new Pi4SPIDevice(SpiFactory.getInstance(params.getSpiChannel(), params.getSpiAPA102Speed(), SpiMode.MODE_0)),

@@ -12,16 +12,16 @@ import java.util.List;
 public class ImgStorage {
     private Map<String,List<byte[]>> imgMap;
     private Map<String,List<byte[]>> imgMapBuffer;
-    private String instructions;
+    private List<String> instructions;
     private int xSize;
     private int ySize;
 
-    public ImgStorage(PendulumParams params) {
-        this.xSize = params.getSizeX();
-        this.ySize = params.getSizeY();
+    public ImgStorage(int xSize, int ySize) {
+        this.xSize = xSize;
+        this.ySize = ySize;
         imgMap = new HashMap<>();
         imgMapBuffer = new HashMap<>();
-        instructions = "";
+        instructions = new ArrayList<>();
     }
 
     private boolean isBufferEmpty() {
@@ -47,7 +47,8 @@ public class ImgStorage {
         return img;
     }
 
-    public synchronized void setImgMapBuffer(Map<String, File> imgMap) throws IOException {
+    public synchronized void loadData(Map<String, File> imgMap, List<String> instructions) throws IOException {
+        this.instructions = instructions;
         Set<Map.Entry<String, File>> entries = imgMap.entrySet();
         for (Map.Entry<String, File> entry : entries) {
             this.imgMapBuffer.put(entry.getKey(), convertImage(entry.getValue()));
@@ -59,13 +60,13 @@ public class ImgStorage {
 
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
-        //TODO: make polar coord convertion
+        //TODO: make polar coord conversion
         for (int i = 0; i < xSize; i++) { //covert image to byteArray list
             byte[] line = new byte[ySize * 4];
             for (int j = 0; j < ySize; j++) {
                 int rgb = polarConverter(i, j, bImg);
 //                int rgb = bImg.getRGB(i, j);
-                byte[] bytes = ByteBuffer.allocate(4).putInt(0).array();
+                byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
                 for (int k = 0; k < bytes.length; k++) {
                     line[j * 4] = bytes[k];
                 }
