@@ -15,6 +15,13 @@ public class Quaternion {
         this(0, 0, 0, 0);
     }
 
+    public Quaternion(Quaternion q) {
+        a = q.getA();
+        b = q.getB();
+        c = q.getC();
+        d = q.getD();
+    }
+
     public Quaternion(float[] data) {
         this.a = data[0];
         this.b = data[0];

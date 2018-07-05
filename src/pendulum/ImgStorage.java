@@ -16,9 +16,9 @@ public class ImgStorage {
     private int xSize;
     private int ySize;
 
-    public ImgStorage(int xSize, int ySize) {
-        this.xSize = xSize;
-        this.ySize = ySize;
+    public ImgStorage(PendulumParams params) {
+        this.xSize = params.getSizeX();
+        this.ySize = params.getSizeY();
         imgMap = new HashMap<>();
         imgMapBuffer = new HashMap<>();
         instructions = "";
@@ -58,12 +58,8 @@ public class ImgStorage {
         List<byte[]> result = new ArrayList<>();
 
         BufferedImage bImg = ImageIO.read(file);    //read img from file
-        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale image
-        bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = bImg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-
+        bImg = resizeImg(bImg);
+        //TODO: make polar coord convertion
         for (int i = 0; i < xSize; i++) { //covert image to byteArray list
             byte[] line = new byte[ySize * 4];
             for (int j = 0; j < ySize; j++) {
@@ -76,5 +72,14 @@ public class ImgStorage {
             result.add(line);
         }
         return result;
+    }
+
+    private BufferedImage resizeImg(BufferedImage bImg) {
+        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale image
+        bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = bImg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return bImg;
     }
 }
