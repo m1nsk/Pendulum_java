@@ -9,7 +9,7 @@ public class PendulumStateMachine {
     private PendulumParams params;
     private ImgDisplay imgDisplay;
     private ImgStorage imgStorage;
-    private CircularArrayRing<Quaternion> sampleBuffer;
+    private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(100);
 
     public PendulumStateMachine(PendulumParams params, ImgDisplay imgDisplay, ImgStorage imgStorage) {
         this.params = params;
