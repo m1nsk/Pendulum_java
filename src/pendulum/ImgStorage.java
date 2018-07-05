@@ -63,8 +63,9 @@ public class ImgStorage {
         for (int i = 0; i < xSize; i++) { //covert image to byteArray list
             byte[] line = new byte[ySize * 4];
             for (int j = 0; j < ySize; j++) {
-                int rgb = bImg.getRGB(i, j);
-                byte[] bytes = ByteBuffer.allocate(4).putInt(1695609641).array();
+                int rgb = polarConverter(i, j, bImg);
+//                int rgb = bImg.getRGB(i, j);
+                byte[] bytes = ByteBuffer.allocate(4).putInt(0).array();
                 for (int k = 0; k < bytes.length; k++) {
                     line[j * 4] = bytes[k];
                 }
@@ -81,5 +82,17 @@ public class ImgStorage {
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
         return bImg;
+    }
+
+    private int polarConverter(int a, int l, BufferedImage bImg) {
+        int DELTA_X = xSize / 2;
+        int BLACK_PIXEL = 61440; // 1111 0000 0000 0000
+        int x = (int)(DELTA_X - l * Math.cos(a * Math.PI / 180));
+        if(x < 0 || x >= xSize) {
+            return BLACK_PIXEL;
+        } else{
+            int y = (int)(l * Math.sin(a * Math.PI / 180));
+            return bImg.getRGB(x * ySize + y, a * ySize + y);
+        }
     }
 }
