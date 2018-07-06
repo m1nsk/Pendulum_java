@@ -1,6 +1,6 @@
-package pendulum.Impl;
+package pendulum.storage.Impl;
 
-import pendulum.ImgStorage;
+import pendulum.storage.ImgStorage;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

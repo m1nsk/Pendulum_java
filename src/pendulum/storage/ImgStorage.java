@@ -1,4 +1,4 @@
-package pendulum;
+package pendulum.storage;
 
 import java.io.File;
 import java.io.IOException;

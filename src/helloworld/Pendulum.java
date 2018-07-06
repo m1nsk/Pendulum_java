@@ -3,15 +3,15 @@ package helloworld;
 import AHRS.AHRS;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
-import devices.Protocol.Pi4SPIDevice;
+import devices.Protocol.spi.Pi4SPIDeviceSpiSelect;
 import devices.sensorImplementations.MPU9250.MPU9250;
-import pendulum.ImgDisplay;
-import pendulum.ImgStorage;
-import pendulum.Impl.ImgDisplayTwoLinesImpl;
-import pendulum.Impl.ImgStorageImpl;
-import pendulum.Impl.PendulumParams;
-import pendulum.Impl.PendulumStateMachineImpl;
-import pendulum.PendulumStateMachine;
+import pendulum.PendulumParams;
+import pendulum.display.ImgDisplay;
+import pendulum.stateMachine.Impl.PendulumStateMachineImpl;
+import pendulum.storage.ImgStorage;
+import pendulum.stateMachine.PendulumStateMachine;
+import pendulum.display.impl.ImgDisplayTwoLinesImpl;
+import pendulum.storage.Impl.ImgStorageImpl;
 import server.ServerPendulum;
 
 import java.io.IOException;
@@ -32,8 +32,10 @@ public class Pendulum {
         imgDisplay.initDisplay(params.getSpiChannel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
 
         MPU9250 mpu9250 = new MPU9250(
-                new Pi4SPIDevice(SpiFactory.getInstance(params.getSpiChannel(), params.getSpiAPA102Speed(), SpiMode.MODE_0)),
-                params.getDisplayFrequency());// sample rate
+                new Pi4SPIDeviceSpiSelect(SpiFactory.getInstance(params.getSpiChannel(),
+                        params.getSpiAPA102Speed(),
+                        SpiMode.MODE_0)),
+                params.getDisplayFrequency());
         AHRS ahrs = new AHRS(mpu9250);
         ahrs.setGyroOffset();
 

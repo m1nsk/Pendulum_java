@@ -1,10 +1,10 @@
-package pendulum.Impl;
+package pendulum.stateMachine.Impl;
 
 import AHRS.Quaternion;
 import devices.sensors.dataTypes.CircularArrayRing;
-import pendulum.ImgDisplay;
-import pendulum.ImgStorage;
-import pendulum.PendulumStateMachine;
+import pendulum.display.ImgDisplay;
+import pendulum.stateMachine.PendulumStateMachine;
+import pendulum.storage.ImgStorage;
 
 import java.io.IOException;
 

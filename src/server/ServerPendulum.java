@@ -1,7 +1,7 @@
 package server;
 
 import fi.iki.elonen.NanoHTTPD;
-import pendulum.ImgStorage;
+import pendulum.storage.ImgStorage;
 
 import java.io.File;
 import java.io.IOException;

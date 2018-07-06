@@ -1,4 +1,4 @@
-package pendulum;
+package pendulum.stateMachine;
 
 import AHRS.Quaternion;
 

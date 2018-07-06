@@ -1,4 +1,6 @@
-package pendulum.Impl;
+package pendulum.display.impl;
+
+import pendulum.SpiSwitcher;
 
 import java.io.IOException;
 

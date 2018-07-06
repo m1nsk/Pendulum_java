@@ -1,9 +1,9 @@
-package pendulum.Impl;
+package pendulum.display.impl;
 
 import com.github.dlopuch.apa102_java_rpi.Apa102Output;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiMode;
-import pendulum.ImgDisplay;
+import pendulum.display.ImgDisplay;
 
 import java.io.IOException;
 import java.util.ArrayList;

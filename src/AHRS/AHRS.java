@@ -5,10 +5,6 @@
  */
 package AHRS;
 
-import com.pi4j.io.spi.SpiChannel;
-import com.pi4j.io.spi.SpiFactory;
-import com.pi4j.io.spi.SpiMode;
-import devices.Protocol.Pi4SPIDevice;
 import devices.sensorImplementations.MPU9250.MPU9250;
 import devices.sensors.dataTypes.TimestampedData3D;
 import java.io.IOException;

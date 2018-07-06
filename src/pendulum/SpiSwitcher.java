@@ -1,4 +1,4 @@
-package pendulum.Impl;
+package pendulum;
 
 import com.pi4j.io.gpio.*;
 
@@ -17,9 +17,9 @@ public class SpiSwitcher {
 
     static {
         gpio = GpioFactory.getInstance();
-        APAFirstPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, PinState.LOW);
-        APASecondPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, PinState.LOW);
-        MPU9250Pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, PinState.LOW);
+        APAFirstPin = gpio.provisionDigitalOutputPin(RaspiBcmPin.GPIO_17, PinState.LOW);
+        APASecondPin = gpio.provisionDigitalOutputPin(RaspiBcmPin.GPIO_27, PinState.LOW);
+        MPU9250Pin = gpio.provisionDigitalOutputPin(RaspiBcmPin.GPIO_22, PinState.LOW);
         lock = new ReentrantLock();
     }
 

@@ -1,6 +1,7 @@
-package devices.Protocol;
+package devices.Protocol.spi;
 
 import com.pi4j.io.spi.SpiDevice;
+import devices.Protocol.ProtocolInterface;
 
 import java.io.IOException;
 import java.util.logging.Level;

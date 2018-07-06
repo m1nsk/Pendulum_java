@@ -1,4 +1,4 @@
-package pendulum.Impl;
+package pendulum;
 
 import com.pi4j.io.spi.SpiChannel;
 
