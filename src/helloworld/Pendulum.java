@@ -7,7 +7,10 @@ import devices.Protocol.Pi4SPIDevice;
 import devices.sensorImplementations.MPU9250.MPU9250;
 import pendulum.ImgDisplay;
 import pendulum.ImgStorage;
-import pendulum.PendulumParams;
+import pendulum.Impl.ImgDisplayTwoLinesImpl;
+import pendulum.Impl.ImgStorageImpl;
+import pendulum.Impl.PendulumParams;
+import pendulum.Impl.PendulumStateMachineImpl;
 import pendulum.PendulumStateMachine;
 import server.ServerPendulum;
 
@@ -17,9 +20,9 @@ import java.io.IOException;
 public class Pendulum {
 
     private static PendulumParams params = new PendulumParams();
-    private static ImgStorage imgStorage = new ImgStorage(params.getSizeX(), params.getSizeY());
-    private static ImgDisplay imgDisplay = new ImgDisplay();
-    private static PendulumStateMachine stateMachine = new PendulumStateMachine(imgDisplay, imgStorage, params.getSizeX(), params.getSizeY());
+    private static ImgStorage imgStorage = new ImgStorageImpl(params.getSizeX(), params.getSizeY());
+    private static ImgDisplay imgDisplay = new ImgDisplayTwoLinesImpl();
+    private static PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplay, imgStorage, params.getSizeX(), params.getSizeY());
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Thread serverThread = new Thread(() -> serverThread());
@@ -36,7 +39,7 @@ public class Pendulum {
 
         while (true) {
             ahrs.imuLoop();
-            stateMachine.getNewSample(ahrs.getQ());
+            stateMachine.readNewSample(ahrs.getQ());
             Thread.sleep(1000 / params.getDisplayFrequency());
         }
     }

@@ -1,99 +1,17 @@
 package pendulum;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.*;
 import java.util.List;
+import java.util.Map;
 
-public class ImgStorage {
-    private Map<String,List<byte[]>> imgMap;
-    private Map<String,List<byte[]>> imgMapBuffer;
-    private List<String> instructions;
-    private int xSize;
-    private int ySize;
+public interface ImgStorage {
 
-    public ImgStorage(int xSize, int ySize) {
-        this.xSize = xSize;
-        this.ySize = ySize;
-        imgMap = new HashMap<>();
-        imgMapBuffer = new HashMap<>();
-        instructions = new ArrayList<>();
-    }
+    List<byte[]> getImg(String name);
 
-    private boolean isBufferEmpty() {
-        return imgMapBuffer.isEmpty();
-    }
+    Map<String, List<byte[]>> getImgMap();
 
-    public synchronized List<byte[]> getImg(String name) {
-        if (!isBufferEmpty()) {
-            imgMap = imgMapBuffer;
-            imgMapBuffer.clear();
-        }
-        List<byte[]> img = copyImg(name);
-        return img;
-    }
+    List<String> getInstructions();
 
-    private List<byte[]> copyImg(String name) {
-        List<byte[]> img = new ArrayList<>();
-        imgMap.getOrDefault(name, new ArrayList<>()).stream().forEach(item -> {
-            byte[] line = new byte[item.length];
-            System.arraycopy( item, 0, line, 0, item.length );
-            img.add(line);
-        });
-        return img;
-    }
-
-    public synchronized void loadData(Map<String, File> imgMap, List<String> instructions) throws IOException {
-        this.instructions = instructions;
-        Set<Map.Entry<String, File>> entries = imgMap.entrySet();
-        for (Map.Entry<String, File> entry : entries) {
-            this.imgMapBuffer.put(entry.getKey(), convertImage(entry.getValue()));
-        }
-    }
-
-    private List<byte[]> convertImage(File file) throws IOException {
-        List<byte[]> result = new ArrayList<>();
-
-        BufferedImage bImg = ImageIO.read(file);    //read img from file
-        bImg = resizeImg(bImg);
-        //TODO: make polar coord conversion
-        for (int i = 0; i < xSize; i++) { //covert image to byteArray list
-            byte[] line = new byte[ySize * 4];
-            for (int j = 0; j < ySize; j++) {
-                int rgb = polarConverter(i, j, bImg);
-//                int rgb = bImg.getRGB(i, j);
-                byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
-                for (int k = 0; k < bytes.length; k++) {
-                    line[j * 4] = bytes[k];
-                }
-            }
-            result.add(line);
-        }
-        return result;
-    }
-
-    private BufferedImage resizeImg(BufferedImage bImg) {
-        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale image
-        bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = bImg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-        return bImg;
-    }
-
-    private int polarConverter(int a, int l, BufferedImage bImg) {
-        int DELTA_X = xSize / 2;
-        int BLACK_PIXEL = 61440; // 1111 0000 0000 0000
-        int x = (int)(DELTA_X - l * Math.cos(a * Math.PI / 180));
-        if(x < 0 || x >= xSize) {
-            return BLACK_PIXEL;
-        } else{
-            int y = (int)(l * Math.sin(a * Math.PI / 180));
-            return bImg.getRGB(x * ySize + y, a * ySize + y);
-        }
-    }
+    void loadData(Map<String, File> imgMap, List<String> instructions) throws IOException;
 }
