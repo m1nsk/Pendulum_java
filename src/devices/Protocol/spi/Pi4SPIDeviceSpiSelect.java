@@ -2,8 +2,11 @@ package devices.Protocol.spi;
 
 import com.pi4j.io.spi.SpiDevice;
 import pendulum.SpiSwitcher;
-
 import java.io.IOException;
+/**
+ *
+ * @author minsk
+ */
 
 public class Pi4SPIDeviceSpiSelect extends Pi4SPIDevice {
     public Pi4SPIDeviceSpiSelect(SpiDevice device) {

@@ -9,10 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImgDisplayImpl implements ImgDisplay {
-    protected Apa102Output apa102Output;
+abstract class ImgDisplayImpl implements ImgDisplay {
+    private Apa102Output apa102Output;
     private List<byte[]> img = new ArrayList<>();
     protected int sizeX;
+
     public ImgDisplayImpl() {
 
     }
@@ -31,9 +32,7 @@ public class ImgDisplayImpl implements ImgDisplay {
         writeStrip(offsetLineNum(lineNum));
     }
 
-    protected int offsetLineNum(int lineNum) {
-        return sizeX / 2 + lineNum;
-    }
+    abstract int offsetLineNum(int lineNum);// {return sizeX / 2 + lineNum;}
 
     protected void writeStrip(int lineNum) throws IOException {
         apa102Output.writeStrip(img.get(lineNum));
