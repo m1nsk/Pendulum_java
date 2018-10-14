@@ -81,8 +81,8 @@ public class ImgStorageImpl implements ImgStorage {
                 int rgb = polarConverter(a, l, bImg);
 //                int rgb = bImg.getRGB(i, j);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
-                for (int k = 0; k < bytes.length; k++) {
-                    line[l * 4] = bytes[k];
+                for (byte aByte : bytes) {
+                    line[l * 4] = aByte;
                 }
             }
             result.add(line);

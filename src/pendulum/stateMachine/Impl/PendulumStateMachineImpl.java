@@ -26,6 +26,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
 
     @Override
     public void readNewSample(Quaternion q) throws IOException {
+//        System.out.println(q);
         addNewSample(q);
         displayLine(q);
     }

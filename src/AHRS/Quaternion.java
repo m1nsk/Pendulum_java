@@ -90,4 +90,14 @@ public class Quaternion {
     public void setD(float d) {
         this.d = d;
     }
+
+    @Override
+    public String toString() {
+        return "Quaternion{" +
+                "a=" + a +
+                ", b=" + b +
+                ", c=" + c +
+                ", d=" + d +
+                '}';
+    }
 }

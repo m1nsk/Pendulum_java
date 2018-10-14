@@ -51,7 +51,7 @@ public class MPU9250 extends NineDOF {
 
         byte c = 0;
         // Set accelerometer full-scale range configuration
-        c = (byte) mpu9250.read(Registers.ACCEL_CONFIG.getAddress()); // get current ACCEL_CONFIG register value
+        c = mpu9250.read(Registers.ACCEL_CONFIG.getAddress()); // get current ACCEL_CONFIG register value
         // c = c & ~0xE0; // Clear self-test bits [7:5]
         c = (byte) (c & ~0x18);  // Clear AFS bits [4:3]
         c = (byte) (c | accScale.getValue() << 3); // Set full scale range for the accelerometer
@@ -60,7 +60,7 @@ public class MPU9250 extends NineDOF {
         // Set accelerometer sample rate configuration
         // It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
         // accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
-        c = (byte) mpu9250.read(Registers.ACCEL_CONFIG2.getAddress()); // get current ACCEL_CONFIG2 register value
+        c = mpu9250.read(Registers.ACCEL_CONFIG2.getAddress()); // get current ACCEL_CONFIG2 register value
         c = (byte) (c & ~0x0F); // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])
         c = (byte) (c | 0x03);  // Set accelerometer rate to 1 kHz and bandwidth to 41 Hz
         mpu9250.write(Registers.ACCEL_CONFIG2.getAddress(), c); // Write new ACCEL_CONFIG2 register value
@@ -88,7 +88,7 @@ public class MPU9250 extends NineDOF {
 
         acc = new TimestampedData3D(x, y, z);
 
-//        System.out.println(acc);
+        System.out.println(acc);
         registers = read16BitRegisters(mpu9250, Registers.GYRO_XOUT_H.getAddress(), 3);
 //        System.out.println(registers[0] + " " + registers[1] + " " + registers[2] );
 

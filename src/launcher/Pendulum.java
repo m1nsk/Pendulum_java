@@ -7,6 +7,7 @@ import devices.Protocol.spi.Pi4SPIDeviceSpiSelect;
 import devices.sensorImplementations.MPU9250.MPU9250;
 import pendulum.PendulumParams;
 import pendulum.display.ImgDisplay;
+import pendulum.display.impl.ImgDefaultDisplayImpl;
 import pendulum.display.impl.ImgFirstDisplayImpl;
 import pendulum.display.impl.ImgSecondDisplayImpl;
 import pendulum.stateMachine.Impl.PendulumStateMachineImpl;
@@ -32,15 +33,12 @@ public class Pendulum {
         serverThread.setDaemon(true);
         serverThread.start();
 
-        ImgDisplay imgDisplayFirst = new ImgFirstDisplayImpl();
-        imgDisplayFirst.initDisplay(params.getSpiChannel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
-        ImgDisplay imgDisplaySecond = new ImgSecondDisplayImpl();
-        imgDisplaySecond.initDisplay(params.getSpiChannel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
-        imgDisplayList.add(imgDisplayFirst);
-        imgDisplayList.add(imgDisplaySecond);
+        ImgDisplay imgDefaultDisplay = new ImgDefaultDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
+        imgDisplayList.add(imgDefaultDisplay);
+
 
         MPU9250 mpu9250 = new MPU9250(
-                new Pi4SPIDeviceSpiSelect(SpiFactory.getInstance(params.getSpiChannel(),
+                new Pi4SPIDeviceSpiSelect(SpiFactory.getInstance(params.getSpiSensorChannel(),
                         params.getSpiAPA102Speed(),
                         SpiMode.MODE_0)),
                 params.getDisplayFrequency());
