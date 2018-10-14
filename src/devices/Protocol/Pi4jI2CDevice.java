@@ -5,8 +5,7 @@ import com.pi4j.io.i2c.I2CDevice;
 import java.io.IOException;
 
 /**
- *
- * @author minsk
+ * Created by MAWood on 17/07/2016.
  */
 public class Pi4jI2CDevice implements ProtocolInterface
 {

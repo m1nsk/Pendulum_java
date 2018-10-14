@@ -6,117 +6,64 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class PendulumParams {
-    private Integer ledNum = 100;
-    private Integer sizeX = 360;
-    private Integer sizeY = 100;
-    private Integer spiAPA102Speed = 1_000_000;
-    private Integer spiSensorSpeed = 1_000_000;
-    private SpiChannel spiSensorChannel = SpiChannel.CS0;
-    private SpiChannel spiApa102Channel = SpiChannel.CS1;
-    private Integer displayFrequency = 300;
+    private int ledNum = 100;
+    private int sizeX = 360;
+    private int sizeY = 100;
+    private int spiAPA102Speed = 1_000_000;
+    private SpiChannel spiChannel = SpiChannel.CS0;
+    private int displayFrequency = 300;
 
     public PendulumParams() {
-        initParamFromResources();
-    }
+        try {
+            initParamFromResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    private String tryGetResource(ResourceBundle resourceBundle, String value) {
-        try {
-            return resourceBundle.getString(value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    
-    private Integer tryParseInt(String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     private void initParamFromResources() {
         Locale locale = Locale.ENGLISH;
-        ResourceBundle myResources = ResourceBundle.getBundle("resources", locale);
-        if (myResources != null) {
-            setLedNum(tryParseInt(tryGetResource(myResources, "ledNum")));
-            setSizeX(tryParseInt(tryGetResource(myResources, "sizeX")));
-            setSizeY(tryParseInt(tryGetResource(myResources, "sizeY")));
-            setSpiAPA102Speed(tryParseInt(tryGetResource(myResources, "spiAPA102Speed")));
-            setSpiSensorSpeed(tryParseInt(tryGetResource(myResources, "spiSensorSpeed")));
-            setDisplayFrequency(tryParseInt(tryGetResource(myResources, "displayFrequency")));
-        }
+        ResourceBundle myResources = ResourceBundle.getBundle("resources",
+                locale);
+        int ledNumT = Integer.parseInt(myResources.getString("ledNum"));
+        int sizeXT = Integer.parseInt(myResources.getString("sizeX"));
+        int sizeYT = Integer.parseInt(myResources.getString("sizeY"));
+        int spiAPA102SpeedT = Integer.parseInt(myResources.getString("spiAPA102Speed"));
+        int displayFrequencyT = Integer.parseInt(myResources.getString("displayFrequency"));
+
+        ledNum = ledNumT;
+        sizeX = sizeXT;
+        sizeY = sizeYT;
+        spiAPA102Speed = spiAPA102SpeedT;
+        displayFrequency = displayFrequencyT;
     }
 
-    public void setLedNum(Integer ledNum) {
-        if (ledNum != null)
-            this.ledNum = ledNum;
-    }
-
-    public void setSizeX(Integer sizeX) {
-        if (sizeX != null)
-            this.sizeX = sizeX;
-    }
-
-    public void setSizeY(Integer sizeY) {
-        if(sizeY != null)
-            this.sizeY = sizeY;
-    }
-
-    public void setSpiAPA102Speed(Integer spiAPA102Speed) {
-        if(spiAPA102Speed != null)
-            this.spiAPA102Speed = spiAPA102Speed;
-    }
-
-    public void setSpiSensorSpeed(Integer spiSensorSpeed) {
-        if (spiSensorSpeed != null)
-            this.spiSensorSpeed = spiSensorSpeed;
-    }
-
-    public void setSpiSensorChannel(SpiChannel spiSensorChannel) {
-        if (spiSensorChannel != null)
-            this.spiSensorChannel = spiSensorChannel;
-    }
-
-    public void setSpiApa102Channel(SpiChannel spiApa102Channel) {
-        if (spiApa102Channel != null)
-            this.spiApa102Channel = spiApa102Channel;
-    }
-
-    public void setDisplayFrequency(Integer displayFrequency) {
-        if(displayFrequency != null)
-            this.displayFrequency = displayFrequency;
-    }
-
-    public Integer getLedNum() {
+    public int getLedNum() {
         return ledNum;
     }
 
-    public Integer getSizeX() {
+    public int getSizeX() {
         return sizeX;
     }
 
-    public Integer getSizeY() {
+    public int getSizeY() {
         return sizeY;
     }
 
-    public Integer getSpiAPA102Speed() {
+    public int getSpiAPA102Speed() {
         return spiAPA102Speed;
     }
 
-    public Integer getSpiSensorSpeed() {
-        return spiSensorSpeed;
+    public SpiChannel getSpiChannel() {
+        return spiChannel;
     }
 
-    public SpiChannel getSpiSensorChannel() {
-        return spiSensorChannel;
-    }
-
-    public SpiChannel getSpiApa102Channel() {
-        return spiApa102Channel;
-    }
-
-    public Integer getDisplayFrequency() {
+    public int getDisplayFrequency() {
         return displayFrequency;
+    }
+
+    public static void main(String[] args) {
+        new PendulumParams();
     }
 }

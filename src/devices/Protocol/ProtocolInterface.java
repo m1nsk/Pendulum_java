@@ -3,8 +3,7 @@ package devices.Protocol;
 import java.io.IOException;
 
 /**
- *
- * @author minsk
+ * Created by MAWood on 17/07/2016.
  */
 public interface ProtocolInterface
 {

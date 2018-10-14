@@ -1,12 +1,13 @@
-package devices.Protocol.spi;
+package devices.Protocol;
 
 import com.pi4j.io.spi.SpiDevice;
-import devices.Protocol.ProtocolInterface;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- *
- * @author minsk
+ * Created by MAWood on 17/07/2016.
  */
 public class Pi4SPIDevice implements ProtocolInterface
 {
