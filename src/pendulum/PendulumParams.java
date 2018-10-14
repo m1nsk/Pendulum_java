@@ -62,8 +62,4 @@ public class PendulumParams {
     public int getDisplayFrequency() {
         return displayFrequency;
     }
-
-    public static void main(String[] args) {
-        new PendulumParams();
-    }
 }

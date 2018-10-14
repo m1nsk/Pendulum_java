@@ -1,4 +1,6 @@
-package pendulum;
+package pendulum.storage.Impl;
+
+import pendulum.storage.ImgStorage;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,25 +11,26 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.List;
 
-public class ImgStorage {
-    private Map<String,List<byte[]>> imgMap;
-    private Map<String,List<byte[]>> imgMapBuffer;
-    private String instructions;
+public class ImgStorageImpl implements ImgStorage {
+    private Map<String, List<byte[]>> imgMap;
+    private Map<String, List<byte[]>> imgMapBuffer;
+    private List<String> instructions;
     private int xSize;
     private int ySize;
 
-    public ImgStorage(PendulumParams params) {
-        this.xSize = params.getSizeX();
-        this.ySize = params.getSizeY();
+    public ImgStorageImpl(int xSize, int ySize) {
+        this.xSize = xSize;
+        this.ySize = ySize;
         imgMap = new HashMap<>();
         imgMapBuffer = new HashMap<>();
-        instructions = "";
+        instructions = new ArrayList<>();
     }
 
     private boolean isBufferEmpty() {
         return imgMapBuffer.isEmpty();
     }
 
+    @Override
     public synchronized List<byte[]> getImg(String name) {
         if (!isBufferEmpty()) {
             imgMap = imgMapBuffer;
@@ -37,21 +40,33 @@ public class ImgStorage {
         return img;
     }
 
-    private List<byte[]> copyImg(String name) {
-        List<byte[]> img = new ArrayList<>();
-        imgMap.getOrDefault(name, new ArrayList<>()).stream().forEach(item -> {
-            byte[] line = new byte[item.length];
-            System.arraycopy( item, 0, line, 0, item.length );
-            img.add(line);
-        });
-        return img;
+    @Override
+    public Map<String, List<byte[]>> getImgMap() {
+        return imgMap;
     }
 
-    public synchronized void setImgMapBuffer(Map<String, File> imgMap) throws IOException {
+    @Override
+    public List<String> getInstructions() {
+        return instructions;
+    }
+
+    @Override
+    public synchronized void loadData(Map<String, File> imgMap, List<String> instructions) throws IOException {
+        this.instructions = instructions;
         Set<Map.Entry<String, File>> entries = imgMap.entrySet();
         for (Map.Entry<String, File> entry : entries) {
             this.imgMapBuffer.put(entry.getKey(), convertImage(entry.getValue()));
         }
+    }
+
+    private List<byte[]> copyImg(String name) {
+        List<byte[]> img = new ArrayList<>();
+        imgMap.getOrDefault(name, new ArrayList<>()).stream().forEach(item -> {
+            byte[] line = new byte[item.length];
+            System.arraycopy(item, 0, line, 0, item.length);
+            img.add(line);
+        });
+        return img;
     }
 
     private List<byte[]> convertImage(File file) throws IOException {
@@ -59,15 +74,15 @@ public class ImgStorage {
 
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
-        //TODO: make polar coord convertion
-        for (int i = 0; i < xSize; i++) { //covert image to byteArray list
+        //TODO: make polar coord conversion
+        for (int a = 0; a < xSize; a++) { //covert image to byteArray list
             byte[] line = new byte[ySize * 4];
-            for (int j = 0; j < ySize; j++) {
-                int rgb = polarConverter(i, j, bImg);
+            for (int l = 0; l < ySize; l++) {
+                int rgb = polarConverter(a, l, bImg);
 //                int rgb = bImg.getRGB(i, j);
-                byte[] bytes = ByteBuffer.allocate(4).putInt(0).array();
+                byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
                 for (int k = 0; k < bytes.length; k++) {
-                    line[j * 4] = bytes[k];
+                    line[l * 4] = bytes[k];
                 }
             }
             result.add(line);
@@ -86,13 +101,15 @@ public class ImgStorage {
 
     private int polarConverter(int a, int l, BufferedImage bImg) {
         int DELTA_X = xSize / 2;
-        int BLACK_PIXEL = 61440; // 1111 0000 0000 0000
-        int x = (int)(DELTA_X - l * Math.cos(a * Math.PI / 180));
-        if(x < 0 || x >= xSize) {
+        int BLACK_PIXEL = 1111 << 16; // 1111 0000 0000 0000
+        int x = (int) (DELTA_X - l * Math.cos(Math.toRadians(a / xSize * 180)));
+        if (x < 0 || x >= xSize) {
             return BLACK_PIXEL;
-        } else{
-            int y = (int)(l * Math.sin(a * Math.PI / 180));
-            return bImg.getRGB(x * ySize + y, a * ySize + y);
+        } else {
+            int y = (int) (l * Math.sin(Math.toRadians(a / xSize * 180)));
+            if (y < 0 || y >= ySize)
+                return BLACK_PIXEL;
+            return bImg.getRGB(x, y);
         }
     }
 }
