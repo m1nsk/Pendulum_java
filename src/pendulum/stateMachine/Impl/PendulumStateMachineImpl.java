@@ -26,7 +26,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
 
     @Override
     public void readNewSample(Quaternion q) throws IOException {
-//        System.out.println(q);
+//        System.out.println(quaternionToLine(q));
         addNewSample(q);
         displayLine(q);
     }
@@ -44,12 +44,4 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
     protected int quaternionToLine(Quaternion q) {
         return (int)(new Quaternion(q).multiply(vertQ).getD() * 2 * 90 / Math.sqrt(2));
     }
-
-//    protected int quaternionToFirstLine(Quaternion q) {
-//        return (int)(this.sizeX / 2 + new Quaternion(q).multiply(vertQ).getD() * 2 * 90 / Math.sqrt(2));
-//    }
-//
-//    protected int quaternionToSecondLine(Quaternion q) {
-//        return (int)(this.sizeX / 2 - new Quaternion(q).multiply(vertQ).getD() * 2 * 90 / Math.sqrt(2));
-//    }
 }

@@ -22,6 +22,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
 
     @Override
     public void displayLine(int lineNum) throws IOException {
+        System.out.println(lineNum);
         if (img.isEmpty() || lineNum < 0 || img.size() < lineNum)
             return;
         writeStrip(offsetLineNum(lineNum));

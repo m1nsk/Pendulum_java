@@ -192,9 +192,9 @@ public class AHRS {
             gy *= 180 / PI;
             gz *= 180 / PI;
 
-            offset[0] += gx * 0.0175;
-            offset[1] += gy * 0.0175;
-            offset[2] += gz * 0.0175;
+            offset[0] += gx / sensor.getGyrScale();
+            offset[1] += gy / sensor.getGyrScale();
+            offset[2] += gz / sensor.getGyrScale();
 
             Thread.sleep(10);
         }

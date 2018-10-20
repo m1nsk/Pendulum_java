@@ -88,7 +88,7 @@ public class MPU9250 extends NineDOF {
 
         acc = new TimestampedData3D(x, y, z);
 
-        System.out.println(acc);
+//        System.out.println(acc);
         registers = read16BitRegisters(mpu9250, Registers.GYRO_XOUT_H.getAddress(), 3);
 //        System.out.println(registers[0] + " " + registers[1] + " " + registers[2] );
 
@@ -114,6 +114,9 @@ public class MPU9250 extends NineDOF {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+//        if(address == 59) {
+//            System.out.println(rawData[0]);
+//        }
         short[] registers = new short[regCount];
         for (int i = 0; i < regCount; i++) {
             registers[i] = (short) ((short) ((rawData[i * 2] + 256) % 256 << 8) | (short) ((rawData[i * 2 + 1] + 256) % 256));  // Turn the MSB and LSB into a signed 16-bit value
