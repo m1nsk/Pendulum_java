@@ -48,7 +48,8 @@ public class Pendulum {
         while (true) {
             ahrs.imuLoop();
             stateMachine.readNewSample(ahrs.getQ());
-            Thread.sleep(500 / params.getDisplayFrequency());
+//            System.out.println(ahrs.getQ());
+            Thread.sleep(2000 / params.getDisplayFrequency());
         }
     }
 

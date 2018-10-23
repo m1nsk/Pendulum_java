@@ -12,13 +12,17 @@ import java.io.IOException;
  *
  * @author minsk
  */
-interface Mpu9250Interface {
-    
+public interface Mpu9250Interface {
+
+    void initialize() throws IOException, InterruptedException ;
+
     float getTemperature();
 
     TimestampedData3D getGyro();
-    
+
     TimestampedData3D getAccel();
+
+    float getGyrScale();
 
     void updateSensorData() throws IOException;
 }

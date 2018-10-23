@@ -6,6 +6,7 @@
 package AHRS;
 
 import devices.sensorImplementations.MPU9250.MPU9250;
+import devices.sensors.Mpu9250Interface;
 import devices.sensors.dataTypes.TimestampedData3D;
 import java.io.IOException;
 
@@ -15,7 +16,7 @@ import java.io.IOException;
  */
 public class AHRS {
 
-    MPU9250 sensor = null;
+    Mpu9250Interface sensor = null;
     private float maxdt;
     private float mindt = 0.01f;
     private boolean isFirst = false;
@@ -30,7 +31,7 @@ public class AHRS {
     private float integralFBy;
     private float integralFBz;
 
-    public AHRS(MPU9250 sensor) {
+    public AHRS(Mpu9250Interface sensor) {
         this.sensor = sensor;
         q0 = 1;
         q1 = 0;
@@ -70,7 +71,7 @@ public class AHRS {
 
     }
 
-    private void updateIMU(float dt) throws IOException {
+    public void updateIMU(float dt) throws IOException {
         float recipNorm;
         float halfvx, halfvy, halfvz;
         float halfex, halfey, halfez;
@@ -97,9 +98,9 @@ public class AHRS {
         ax /= G_SI;
         ay /= G_SI;
         az /= G_SI;
-        gx *= (180 / PI) / sensor.getGyrScale();
-        gy *= (180 / PI) / sensor.getGyrScale();
-        gz *= (180 / PI) / sensor.getGyrScale();
+        gx *= (180 / PI) * 0.0175;
+        gy *= (180 / PI) * 0.0175;
+        gz *= (180 / PI) * 0.0175;
 
         gx -= gyroOffset[0];
         gy -= gyroOffset[1];
@@ -108,7 +109,7 @@ public class AHRS {
         // cout << " ax: " << ax << " ay: " << ay << " az: " << az << "\n";
         // cout << " gx: " << gx << " gy: " << gy << " gz: " << gz << "\n";
         // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-        if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
+        if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
 
             // Normalise accelerometer measurement
             recipNorm = invSqrt(ax * ax + ay * ay + az * az);
@@ -127,14 +128,15 @@ public class AHRS {
             halfez = (ax * halfvy - ay * halfvx);
 
             // Compute and apply integral feedback if enabled
-            if (twoKi > 0.0f) {
+            if(twoKi > 0.0f) {
                 integralFBx += twoKi * halfex * dt;	// integral error scaled by Ki
                 integralFBy += twoKi * halfey * dt;
                 integralFBz += twoKi * halfez * dt;
                 gx += integralFBx;	// apply integral feedback
                 gy += integralFBy;
                 gz += integralFBz;
-            } else {
+            }
+            else {
                 integralFBx = 0.0f;	// prevent integral windup
                 integralFBy = 0.0f;
                 integralFBz = 0.0f;
@@ -192,9 +194,9 @@ public class AHRS {
             gy *= 180 / PI;
             gz *= 180 / PI;
 
-            offset[0] += gx / sensor.getGyrScale();
-            offset[1] += gy / sensor.getGyrScale();
-            offset[2] += gz / sensor.getGyrScale();
+            offset[0] += gx * 0.0175;
+            offset[1] += gy * 0.0175;
+            offset[2] += gz * 0.0175;
 
             Thread.sleep(10);
         }
