@@ -56,7 +56,7 @@ public class TimestampedData3D extends Data3D
 
     public TimestampedData3D clone()
     {
-        return new TimestampedData3D(x,y,z,nanoTime);
+        return new TimestampedData3D(this.getX(),this.getY(),this.getZ(),nanoTime);
     }
 
 }

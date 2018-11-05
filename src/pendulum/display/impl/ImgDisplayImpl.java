@@ -27,7 +27,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
         writeStrip(offsetLineNum(lineNum));
     }
 
-    abstract int offsetLineNum(int lineNum);// {return sizeX / 2 + lineNum;}
+    abstract int offsetLineNum(int lineNum);
 
     protected void writeStrip(int lineNum) throws IOException {
         apa102Output.writeStrip(img.get(lineNum));

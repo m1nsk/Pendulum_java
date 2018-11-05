@@ -42,6 +42,10 @@ public class CircularArrayRing<T> extends AbstractCollection<T>
         return (T) data[pointer];
     }
 
+    @Override
+    public void clear() {
+        size = 1;
+    }
 
     @Override
     public boolean add(T item) {

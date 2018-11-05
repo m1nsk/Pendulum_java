@@ -92,9 +92,6 @@ public class AHRS {
         gy = gyr.getY();
         gz = gyr.getZ();
 
-        // Console output
-        //outfile << " ax: " << ax << " ay: " << ay << " az: " << az << "\n";
-        //outfile << " gx: " << gx << " gy: " << gy << " gz: " << gz << "\n";
         ax /= G_SI;
         ay /= G_SI;
         az /= G_SI;
@@ -106,8 +103,6 @@ public class AHRS {
         gy -= gyroOffset[1];
         gz -= gyroOffset[2];
 
-        // cout << " ax: " << ax << " ay: " << ay << " az: " << az << "\n";
-        // cout << " gx: " << gx << " gy: " << gy << " gz: " << gz << "\n";
         // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
         if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
 

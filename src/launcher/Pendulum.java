@@ -29,9 +29,6 @@ public class Pendulum {
     private static PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplayList, imgStorage, params.getSizeX(), params.getSizeY());
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        Thread serverThread = new Thread(() -> serverThread());
-        serverThread.setDaemon(true);
-        serverThread.start();
 
         ImgDisplay imgDefaultDisplay = new ImgDefaultDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
         imgDisplayList.add(imgDefaultDisplay);

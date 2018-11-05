@@ -14,6 +14,7 @@ public class PendulumParams {
     private SpiChannel spiSensorChannel = SpiChannel.CS0;
     private SpiChannel spiApa102Channel = SpiChannel.CS1;
     private Integer displayFrequency = 300;
+    private String imageFolderPath = "images/test.txt";
 
     public PendulumParams() {
         initParamFromResources();
@@ -118,5 +119,13 @@ public class PendulumParams {
 
     public Integer getDisplayFrequency() {
         return displayFrequency;
+    }
+
+    public String getImageFolderPath() {
+        return imageFolderPath;
+    }
+
+    public void setImageFolderPath(String imageFolderPath) {
+        this.imageFolderPath = imageFolderPath;
     }
 }
