@@ -98,7 +98,7 @@ public class PendulumParams {
 
     public File getConfigStorageFolder() {
         ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource(PATH_TO_STORAGE + "config").getFile());
+        return new File(classLoader.getResource(PATH_TO_STORAGE + "config.properties").getFile());
     }
 
     public void updateParams(Properties newProperties) throws IOException {

@@ -16,13 +16,9 @@ public interface Mpu9250Interface {
 
     void initialize() throws IOException, InterruptedException ;
 
-    float getTemperature();
-
     TimestampedData3D getGyro();
 
     TimestampedData3D getAccel();
-
-    float getGyrScale();
 
     void updateSensorData() throws IOException;
 }
