@@ -1,10 +1,12 @@
 package launcher;
 
 import AHRS.AHRS;
+import UsbReader.FlashReader;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
 import devices.Protocol.spi.Pi4SPIDevice;
 import devices.sensorImplementations.MPU9250.MPU9250;
+import pendulum.Loader.HDDLoader;
 import pendulum.PendulumParams;
 import pendulum.display.ImgDisplay;
 import pendulum.display.impl.ImgDefaultDisplayImpl;
@@ -19,6 +21,7 @@ import server.ServerPendulum;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 
 public class Pendulum {
@@ -27,8 +30,11 @@ public class Pendulum {
     private static ImgStorage imgStorage = new ImgStorageImpl(params.getSizeX(), params.getSizeY());
     private static List<ImgDisplay> imgDisplayList = new ArrayList<>();
     private static PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplayList, imgStorage, params.getSizeX(), params.getSizeY());
+    private static HDDLoader hddLoader = new HDDLoader(params, imgStorage);
+    private static FlashReader flashReader = new FlashReader(params, hddLoader);
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        new Timer().schedule(flashReader, 0, 1000);
 
         ImgDisplay imgDefaultDisplay = new ImgDefaultDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
         imgDisplayList.add(imgDefaultDisplay);
@@ -45,16 +51,7 @@ public class Pendulum {
         while (true) {
             ahrs.imuLoop();
             stateMachine.readNewSample(ahrs.getQ());
-//            System.out.println(ahrs.getQ());
-            Thread.sleep(2000 / params.getDisplayFrequency());
-        }
-    }
-
-    private static void serverThread() {
-        try {
-            new ServerPendulum(imgStorage);
-        } catch (IOException ex) {
-            System.err.println("Couldn't start server:\n" + ex);
+            Thread.sleep(1000 / params.getDisplayFrequency());
         }
     }
 }
