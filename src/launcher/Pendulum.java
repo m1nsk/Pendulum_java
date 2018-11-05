@@ -3,7 +3,7 @@ package launcher;
 import AHRS.AHRS;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
-import devices.Protocol.spi.Pi4SPIDeviceSpiSelect;
+import devices.Protocol.spi.Pi4SPIDevice;
 import devices.sensorImplementations.MPU9250.MPU9250;
 import pendulum.PendulumParams;
 import pendulum.display.ImgDisplay;
@@ -35,7 +35,7 @@ public class Pendulum {
 
 
         MPU9250 mpu9250 = new MPU9250(
-                new Pi4SPIDeviceSpiSelect(SpiFactory.getInstance(params.getSpiSensorChannel(),
+                new Pi4SPIDevice(SpiFactory.getInstance(params.getSpiSensorChannel(),
                         params.getSpiAPA102Speed(),
                         SpiMode.MODE_0)),
                 params.getDisplayFrequency());
