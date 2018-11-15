@@ -61,7 +61,6 @@ public class Quaternion {
         float x = qq - xx + (q1.xp + q1.wp) * (q2.xp + q2.wp);
         float y = qq - yy + (q1.wp - q1.xp) * (q2.yp + q2.zp);
         float z = qq - zz + (q1.zp + q1.yp) * (q2.wp - q2.xp);
-        
         return new Quaternion(w, x, y, z);
     }
 

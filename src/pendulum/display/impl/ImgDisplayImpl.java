@@ -7,7 +7,9 @@ import pendulum.display.ImgDisplay;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 abstract class ImgDisplayImpl implements ImgDisplay {
     private Apa102Output apa102Output;
@@ -22,7 +24,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
 
     @Override
     public void displayLine(int lineNum) throws IOException {
-        if (img.isEmpty() || lineNum < 0 || img.size() < lineNum)
+        if (img == null || img.isEmpty() || lineNum < 0 || img.size() < lineNum)
             return;
         writeStrip(offsetLineNum(lineNum));
     }
@@ -35,6 +37,12 @@ abstract class ImgDisplayImpl implements ImgDisplay {
 
     @Override
     public void setImg(List<byte[]> img) {
-        this.img = img;
+        this.img = imgCopy(img);
+    }
+
+    private List<byte[]> imgCopy(List<byte[]> img){
+        if (img == null)
+            return null;
+        return img.stream().map(line -> Arrays.copyOf(line, line.length)).collect(Collectors.toList());
     }
 }

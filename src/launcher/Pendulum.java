@@ -14,12 +14,10 @@ import pendulum.PendulumParams;
 import pendulum.display.ImgDisplay;
 import pendulum.display.impl.ImgDefaultDisplayImpl;
 import pendulum.display.impl.ImgFirstDisplayImpl;
-import pendulum.display.impl.ImgSecondDisplayImpl;
 import pendulum.stateMachine.Impl.PendulumStateMachineImpl;
-import pendulum.storage.ImgStorage;
 import pendulum.stateMachine.PendulumStateMachine;
-import pendulum.storage.Impl.ImgStorageImpl;
-import server.ServerPendulum;
+import pendulum.storage.ImgListStorage;
+import pendulum.storage.Impl.ImgListStorageImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;

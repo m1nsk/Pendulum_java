@@ -4,36 +4,57 @@ import AHRS.Quaternion;
 import devices.sensors.dataTypes.CircularArrayRing;
 import pendulum.display.ImgDisplay;
 import pendulum.stateMachine.PendulumStateMachine;
-import pendulum.storage.ImgStorage;
+import pendulum.storage.ImgListStorage;
 
 import java.io.IOException;
 import java.util.List;
 
 public class PendulumStateMachineImpl implements PendulumStateMachine {
     private static Quaternion vertQ = new Quaternion((float) Math.sqrt(2) / 2, 0, (float) Math.sqrt(2) / 2, 0);
+    private static int BUFFER_SIZE = 100;
+    private static int MOVE_LIMIT_FLAG = 100;
+    private MovementState state = MovementState.SLOW;
     private List<ImgDisplay> imgDisplayList;
-    private ImgStorage imgStorage;
+    private ImgListStorage imgStorage;
     private int sizeX;
     private int sizeY;
-    private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(100);
+    private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(BUFFER_SIZE);
+    private CircularArrayRing<Integer> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
 
-    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgStorage imgStorage, int sizeX, int sizeY) {
+    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage, int sizeX, int sizeY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.imgDisplayList = imgDisplayList;
         this.imgStorage = imgStorage;
+        imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.current()));
     }
 
     @Override
     public void readNewSample(Quaternion q) throws IOException {
         System.out.println(quaternionToLine(q));
         addNewSample(q);
-        displayLine(q);
+        int line = quaternionToLine(q);
+        lineValueBuffer.add(line);
+//        System.out.println(state);
+        if(checkTurn()) {
+            imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.next()));
+        }
+        displayLine(line);
     }
 
-    protected void displayLine(Quaternion q) throws IOException {
+    @Override
+    public void nextImg() {
+        imgStorage.next();
+    }
+
+    @Override
+    public void previousImg() {
+        imgStorage.previous();
+    }
+
+    protected void displayLine(int line) throws IOException {
         for(ImgDisplay imgDisplay: imgDisplayList){
-            imgDisplay.displayLine(quaternionToLine(q));
+            imgDisplay.displayLine(line);
         }
     }
 
@@ -42,6 +63,48 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
     }
 
     protected int quaternionToLine(Quaternion q) {
-        return (int)(Quaternion.multiply(q, vertQ).getZp() * 2 * 90 / Math.sqrt(2));
+        return (int) (90 + Quaternion.multiply(q, vertQ).getXp() * 2 * 90 / Math.sqrt(2));
+    }
+
+    private boolean checkTurn() {
+        int windowSize = 20;
+        int moveTurnLimit = 7;
+        if(lineValueBuffer.size() > windowSize) {
+            int size = lineValueBuffer.size() - 1;
+            int start = lineValueBuffer.get(size - windowSize);
+            int middle = lineValueBuffer.get(size - windowSize / 2);
+            int end = lineValueBuffer.get(size);
+            if(Math.abs(start - end) < moveTurnLimit) {
+                state = MovementState.SLOW;
+            }
+            if((start - middle) * (middle - end) > 0)
+                return false;
+            if(Math.abs(start - middle) < moveTurnLimit || Math.abs(middle - start) < moveTurnLimit)
+                return false;
+            if(Math.abs(Math.abs(start - middle) - Math.abs(middle - end)) < 100) {
+                switch (state) {
+                    case LEFT: {
+                        state = MovementState.RIGHT;
+                        lineValueBuffer.clear();
+                        return true;
+                    }
+                    case RIGHT: {
+                        state = MovementState.LEFT;
+                        lineValueBuffer.clear();
+                        return true;
+                    }
+                    case SLOW: {
+                        state = middle - end > 0 ? MovementState.LEFT : MovementState.RIGHT;
+                        lineValueBuffer.clear();
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    enum MovementState {
+        RIGHT, LEFT, SLOW
     }
 }

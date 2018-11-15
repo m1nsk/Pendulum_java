@@ -178,7 +178,7 @@ public class AHRS {
 
         //-------------------------------------------------------------------------
         System.out.println("Beginning Gyro calibration...\n");
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 300; i++) {
             sensor.updateSensorData();
             TimestampedData3D gyr = sensor.getGyro();
             gx = gyr.getX();
@@ -195,9 +195,9 @@ public class AHRS {
 
             Thread.sleep(10);
         }
-        offset[0] /= 100.0;
-        offset[1] /= 100.0;
-        offset[2] /= 100.0;
+        offset[0] /= 300.0;
+        offset[1] /= 300.0;
+        offset[2] /= 300.0;
         
         System.out.println("Offsets are: " + offset[0] + " " + offset[1] + " " + offset[2]);
 
