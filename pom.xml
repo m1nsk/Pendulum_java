@@ -20,7 +20,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>minsk.flashReader</mainClass>
+                            <mainClass>launcher.Pendulum</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -41,6 +41,15 @@
             <id>ailis</id>
             <name>Ailis Maven Repository</name>
             <url>http://nexus.ailis.de/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>oss-snapshots-repo</id>
+            <name>Sonatype OSS Maven Repository</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -70,6 +79,12 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.pi4j</groupId>-->
+            <!--<artifactId>pi4j-core</artifactId>-->
+            <!--<version>1.2-SNAPSHOT</version>-->
+        <!--</dependency>-->
+
     </dependencies>
 
 </project>

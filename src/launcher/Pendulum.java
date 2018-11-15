@@ -4,6 +4,9 @@ import AHRS.AHRS;
 import UsbReader.FlashReader;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
+import com.pi4j.platform.Platform;
+import com.pi4j.platform.PlatformAlreadyAssignedException;
+import com.pi4j.platform.PlatformManager;
 import devices.Protocol.spi.Pi4SPIDevice;
 import devices.sensorImplementations.MPU9250.MPU9250;
 import pendulum.Loader.HDDLoader;
@@ -26,19 +29,21 @@ import java.util.Timer;
 
 public class Pendulum {
 
-    private static PendulumParams params = new PendulumParams();
-    private static ImgStorage imgStorage = new ImgStorageImpl(params.getSizeX(), params.getSizeY());
-    private static List<ImgDisplay> imgDisplayList = new ArrayList<>();
-    private static PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplayList, imgStorage, params.getSizeX(), params.getSizeY());
-    private static HDDLoader hddLoader = new HDDLoader(params, imgStorage);
-    private static FlashReader flashReader = new FlashReader(params, hddLoader);
-
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        PendulumParams params = PendulumParams.getInstance();
+        ImgListStorage imgStorage = new ImgListStorageImpl(params.getSizeX(), params.getSizeY());
+        List<ImgDisplay> imgDisplayList = new ArrayList<>();
+        HDDLoader hddLoader = new HDDLoader(imgStorage);
+        FlashReader flashReader = new FlashReader(hddLoader);
+
         new Timer().schedule(flashReader, 0, 1000);
+        hddLoader.Load();
 
-        ImgDisplay imgDefaultDisplay = new ImgDefaultDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
-        imgDisplayList.add(imgDefaultDisplay);
+        ImgDisplay imgDisplay = new ImgFirstDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
+        imgDisplayList.add(imgDisplay);
 
+        PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplayList, imgStorage, params.getSizeX(), params.getSizeY());
 
         MPU9250 mpu9250 = new MPU9250(
                 new Pi4SPIDevice(SpiFactory.getInstance(params.getSpiSensorChannel(),

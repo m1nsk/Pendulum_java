@@ -3,17 +3,19 @@ package pendulum.Loader;
 import pendulum.PendulumParams;
 import pendulum.storage.ImgListStorage;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HDDLoader {
-    private PendulumParams params;
+    private PendulumParams params = PendulumParams.getInstance();
     private ImgListStorage storage;
     private Long lastModified;
 
-    public HDDLoader(PendulumParams params, ImgListStorage storage) {
-        this.params = params;
+    public HDDLoader(ImgListStorage storage) {
+        this.storage = storage;
     }
 
     public void Load() throws IOException {

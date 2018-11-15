@@ -6,16 +6,15 @@ import lombok.Setter;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
+
 
 @Getter
 @Setter
 public class PendulumParams {
+    private static volatile PendulumParams instance;
     private Integer ledNum = 100;
     private Integer sizeX = 360;
     private Integer sizeY = 100;
@@ -25,9 +24,24 @@ public class PendulumParams {
     private SpiChannel spiApa102Channel = SpiChannel.CS1;
     private Integer displayFrequency = 300;
     private static final String PATH_TO_STORAGE = "storage/";
+    private ClassLoader classLoader = getClass().getClassLoader();
+    private String storagePath = new File(classLoader.getResource(PATH_TO_STORAGE).getFile()).getPath();
 
-    public PendulumParams() {
+    private PendulumParams() {
         initParamFromResources();
+    }
+
+    public static PendulumParams getInstance() {
+        PendulumParams localInstance = instance;
+        if (localInstance == null) {
+            synchronized (PendulumParams.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new PendulumParams();
+                }
+            }
+        }
+        return localInstance;
     }
 
     private String tryGetResource(Properties properties, String value) {
@@ -46,7 +60,7 @@ public class PendulumParams {
         }
     }
 
-    private void initParamFromResources() {
+    public void initParamFromResources() {
         Properties myResources = new Properties();
         try {
             myResources.load(new FileInputStream(getConfigStorageFolder()));
@@ -87,24 +101,29 @@ public class PendulumParams {
     }
 
     public File getInstructionsStorageFolder() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource(PATH_TO_STORAGE + "instructions").getFile());
+        return new File(storagePath + "/instructions");
     }
 
     public File getImagesStorageFolder() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource(PATH_TO_STORAGE + "image").getFile());
+        return new File(storagePath + "/images");
     }
 
     public File getConfigStorageFolder() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource(PATH_TO_STORAGE + "config.properties").getFile());
+        return new File(storagePath + "/config.properties");
     }
 
     public void updateParams(Properties newProperties) throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(getConfigStorageFolder()));
-        newProperties.forEach((key, value) -> properties.setProperty((String)key, (String)value));
+        try(FileInputStream fis = new FileInputStream(getConfigStorageFolder())){
+            properties.load(new FileInputStream(getConfigStorageFolder()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        try (FileOutputStream fos = new FileOutputStream(getConfigStorageFolder())) {
+            newProperties.forEach((key, value) -> properties.setProperty((String) key, (String) value));
+            properties.store(fos, "");
+        }
         initParamFromResources();
     }
 }

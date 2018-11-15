@@ -17,12 +17,11 @@ public class FlashReader extends TimerTask {
     private final static String USB_FOLDER_PATH = "/media/";
     private static String hash;
 
-    private PendulumParams params;
+    private PendulumParams params = PendulumParams.getInstance();
 
     private HDDLoader hddLoader;
 
-    public FlashReader(PendulumParams params, HDDLoader hddLoader) {
-        this.params = params;
+    public FlashReader(HDDLoader hddLoader) {
         this.hddLoader = hddLoader;
     }
 
@@ -37,7 +36,7 @@ public class FlashReader extends TimerTask {
     }
 
     /**
-     image data structure
+     images data structure
      -usb_folder
      -pendulum**.properties   //properties file.
                               //here we store additional properties.
@@ -54,8 +53,8 @@ public class FlashReader extends TimerTask {
                 File[] files = usb.listFiles((file1, s) -> s.endsWith(".properties") && s.startsWith("pendulum"));
                 for (File file : files) {
                     if(validateConfigData(file)) {
-                        File instructions = new File(file.getParentFile().getPath() + "instructions");
-                        File images = new File(file.getParentFile().getPath() + "images");
+                        File instructions = new File(file.getParentFile().getPath() + "/instructions");
+                        File images = new File(file.getParentFile().getPath() + "/images");
                         if (validateInstructions(instructions) && validateImages(images)) {
                             copyFiles(file, instructions, images);
                             return true;
@@ -83,8 +82,7 @@ public class FlashReader extends TimerTask {
     private boolean validateConfigData(File file) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(file));
-        if (properties.containsKey("device")
-                && properties.containsKey("hash")){
+        if (properties.containsKey("hash")){
             if (hash == null || !hash.equals(properties.getProperty("hash"))) {
                 hash = properties.getProperty("hash");
                 return true;
@@ -101,7 +99,7 @@ public class FlashReader extends TimerTask {
                 String name = ImageUtils.getFileName(image);
                 if (ImageUtils.IMAGE_EXTENSION_SET.contains(ImageUtils.getFileExtension(image)) && isIntegerString(name)){
                     if(imgSet.contains(name)) {
-                        log.error("duplicate image naming");
+                        log.error("duplicate images naming");
                         return false;
                     }
                     imgSet.add(name);
@@ -113,7 +111,7 @@ public class FlashReader extends TimerTask {
                 return false;
             return true;
         }
-        log.error("invalid image file");
+        log.error("invalid images file");
         return false;
     }
 
@@ -137,7 +135,6 @@ public class FlashReader extends TimerTask {
         File instructions = params.getInstructionsStorageFolder();
         if(instructions.exists()) {
             FileUtils.forceDelete(instructions);
-            instructions = params.getInstructionsStorageFolder();
         }
         FileUtils.copyFile(newInstructions, instructions);
     }

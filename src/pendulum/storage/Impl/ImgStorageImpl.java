@@ -75,7 +75,7 @@ public class ImgStorageImpl implements ImgStorage {
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
         //TODO: make polar coord conversion
-        for (int a = 0; a < xSize; a++) { //covert image to byteArray list
+        for (int a = 0; a < xSize; a++) { //covert images to byteArray list
             byte[] line = new byte[ySize * 4];
             for (int l = 0; l < ySize; l++) {
                 int rgb = polarConverter(a, l, bImg);
@@ -91,7 +91,7 @@ public class ImgStorageImpl implements ImgStorage {
     }
 
     private BufferedImage resizeImg(BufferedImage bImg) {
-        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale image
+        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale images
         bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bImg.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);

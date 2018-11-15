@@ -10,7 +10,7 @@ public class ImageUtils {
 
     public static String getFileExtension(File file) {
         String name = file.getName();
-        return name.substring(name.lastIndexOf('.'));
+        return name.substring(name.lastIndexOf('.') + 1);
     }
 
     public static String getFileName(File file) {

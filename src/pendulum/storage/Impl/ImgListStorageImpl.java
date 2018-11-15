@@ -85,14 +85,14 @@ public class ImgListStorageImpl implements ImgListStorage {
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
         //TODO: make polar coord conversion
-        for (int a = 0; a < xSize; a++) { //covert image to byteArray list
-            byte[] line = new byte[ySize * 4];
+        for (int a = 0; a < xSize; a++) { //covert images to byteArray list
+            byte[] line = new byte[ySize * 3];
             for (int l = 0; l < ySize; l++) {
                 int rgb = polarConverter(a, l, bImg);
 //                int rgb = bImg.getRGB(i, j);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
-                for (byte aByte : bytes) {
-                    line[l * 4] = aByte;
+                for (int i = 1; i < bytes.length; i++) {
+                    line[l * 3] = bytes[i];
                 }
             }
             result.add(line);
@@ -101,7 +101,7 @@ public class ImgListStorageImpl implements ImgListStorage {
     }
 
     private BufferedImage resizeImg(BufferedImage bImg) {
-        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale image
+        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale images
         bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bImg.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
@@ -119,7 +119,7 @@ public class ImgListStorageImpl implements ImgListStorage {
             int y = (int) (l * Math.sin(Math.toRadians(a / xSize * 180)));
             if (y < 0 || y >= ySize)
                 return BLACK_PIXEL;
-            return bImg.getRGB(x, y);
+            return bImg.getRGB(x, y) ;
         }
     }
 }

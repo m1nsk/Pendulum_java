@@ -1,6 +1,6 @@
 package pendulum.display.impl;
 
-import com.github.dlopuch.apa102_java_rpi.Apa102Output;
+import APA102.Apa102Output;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiMode;
 import pendulum.display.ImgDisplay;
