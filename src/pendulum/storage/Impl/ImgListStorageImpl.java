@@ -91,9 +91,10 @@ public class ImgListStorageImpl implements ImgListStorage {
                 int rgb = polarConverter(a, l, bImg);
 //                int rgb = bImg.getRGB(i, j);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
-                for (int i = 1; i < bytes.length; i++) {
-                    line[l * 3] = bytes[i];
-                }
+                System.arraycopy(bytes, 1, line, l * 3, 3);
+//                for (int i = 1; i < bytes.length; i++) {
+//                    line[l * 3 + i] = bytes[i];
+//                }
             }
             result.add(line);
         }
@@ -102,7 +103,7 @@ public class ImgListStorageImpl implements ImgListStorage {
 
     private BufferedImage resizeImg(BufferedImage bImg) {
         Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale images
-        bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_ARGB);
+        bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bImg.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
@@ -112,11 +113,11 @@ public class ImgListStorageImpl implements ImgListStorage {
     private int polarConverter(int a, int l, BufferedImage bImg) {
         int DELTA_X = xSize / 2;
         int BLACK_PIXEL = 1111 << 16; // 1111 0000 0000 0000
-        int x = (int) (DELTA_X - l * Math.cos(Math.toRadians(a / xSize * 180)));
+        int x = (int) (DELTA_X - l * Math.cos(Math.toRadians((float)a / xSize * 180)));
         if (x < 0 || x >= xSize) {
             return BLACK_PIXEL;
         } else {
-            int y = (int) (l * Math.sin(Math.toRadians(a / xSize * 180)));
+            int y = (int) (l * Math.sin(Math.toRadians((float)a / xSize * 180)));
             if (y < 0 || y >= ySize)
                 return BLACK_PIXEL;
             return bImg.getRGB(x, y) ;

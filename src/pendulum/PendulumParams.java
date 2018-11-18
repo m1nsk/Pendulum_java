@@ -16,7 +16,7 @@ import java.util.Properties;
 public class PendulumParams {
     private static volatile PendulumParams instance;
     private Integer ledNum = 100;
-    private Integer sizeX = 360;
+    private Integer sizeX = 180;
     private Integer sizeY = 100;
     private Integer spiAPA102Speed = 1_000_000;
     private Integer spiSensorSpeed = 1_000_000;

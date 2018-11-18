@@ -38,7 +38,7 @@ public class Pendulum {
         new Timer().schedule(flashReader, 0, 1000);
         hddLoader.Load();
 
-        ImgDisplay imgDisplay = new ImgFirstDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
+        ImgDisplay imgDisplay = new ImgDefaultDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed(), params.getSizeX(), params.getLedNum());
         imgDisplayList.add(imgDisplay);
 
         PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplayList, imgStorage, params.getSizeX(), params.getSizeY());
