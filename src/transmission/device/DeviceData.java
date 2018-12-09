@@ -1,13 +1,13 @@
-package convertor;
+package transmission.device;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -18,8 +18,6 @@ public class DeviceData{
     private List<File> images = new ArrayList<>();
 
     public DeviceData() {
-        props.put("ledNum", LED_NUM.toString());
-        props.put("brightness", BRIGHTNESS.toString());
     }
 
 
