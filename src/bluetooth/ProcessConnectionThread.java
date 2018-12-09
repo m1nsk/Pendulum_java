@@ -28,11 +28,7 @@ public class ProcessConnectionThread implements Runnable{
             storage.mkdir();
         }
         deviceDataConverter = new DeviceDataConverter(storage.getPath());
-        try {
-            device.setStorage(storage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        device.setStorage(storage);
     }
 
     @Override

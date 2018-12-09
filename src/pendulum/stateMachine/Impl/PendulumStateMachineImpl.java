@@ -17,13 +17,13 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
     private List<ImgDisplay> imgDisplayList;
     private ImgListStorage imgStorage;
     private int sizeX;
-    private int sizeY;
+    private int polarYSize;
     private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(BUFFER_SIZE);
     private CircularArrayRing<Integer> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
 
-    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage, int sizeX, int sizeY) {
+    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage, int sizeX, int polarYSize) {
         this.sizeX = sizeX;
-        this.sizeY = sizeY;
+        this.polarYSize = polarYSize;
         this.imgDisplayList = imgDisplayList;
         this.imgStorage = imgStorage;
         imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.current()));

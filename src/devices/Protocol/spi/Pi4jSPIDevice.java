@@ -8,14 +8,14 @@ import java.io.IOException;
  *
  * @author minsk
  */
-public class Pi4SPIDevice implements ProtocolInterface
+public class Pi4jSPIDevice implements ProtocolInterface
 {
    private final SpiDevice device;
    
    
     public static int READ_CMD = 0x80;
 
-    public Pi4SPIDevice(SpiDevice device)
+    public Pi4jSPIDevice(SpiDevice device)
     {
         this.device = device;
     }
@@ -43,6 +43,5 @@ public class Pi4SPIDevice implements ProtocolInterface
     public void write(int address, byte data) throws IOException
     {
         device.write((byte)address,data);
-//        System.out.println("address " + address + " data: " + data + " checked: " + read(address));
     }
 }

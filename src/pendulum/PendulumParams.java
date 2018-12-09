@@ -1,5 +1,6 @@
 package pendulum;
 
+import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.spi.SpiChannel;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,12 +16,11 @@ import java.util.Properties;
 @Setter
 public class PendulumParams {
     private static volatile PendulumParams instance;
-    private Integer ledNum = 100;
-    private Integer sizeX = 180;
-    private Integer sizeY = 100;
+    private Integer polarYSize = 100;
     private Integer spiAPA102Speed = 1_000_000;
     private Integer spiSensorSpeed = 1_000_000;
     private SpiChannel spiSensorChannel = SpiChannel.CS0;
+    private Integer i2cBus = I2CBus.BUS_1;
     private SpiChannel spiApa102Channel = SpiChannel.CS1;
     private Integer displayFrequency = 300;
     private static final String PATH_TO_STORAGE = "storage/";
@@ -64,9 +64,7 @@ public class PendulumParams {
         Properties myResources = new Properties();
         try {
             myResources.load(new FileInputStream(getConfigStorageFolder()));
-            setLedNum(tryParseInt(tryGetResource(myResources, "ledNum")));
-            setSizeX(tryParseInt(tryGetResource(myResources, "sizeX")));
-            setSizeY(tryParseInt(tryGetResource(myResources, "sizeY")));
+            setPolarYSize(tryParseInt(tryGetResource(myResources, "polarYSize")));
             setSpiAPA102Speed(tryParseInt(tryGetResource(myResources, "spiAPA102Speed")));
             setSpiSensorSpeed(tryParseInt(tryGetResource(myResources, "spiSensorSpeed")));
             setDisplayFrequency(tryParseInt(tryGetResource(myResources, "displayFrequency")));
@@ -75,19 +73,9 @@ public class PendulumParams {
         }
     }
 
-    private void setLedNum(Integer ledNum) {
-        if (ledNum != null)
-            this.ledNum = ledNum;
-    }
-
-    private void setSizeX(Integer sizeX) {
-        if (sizeX != null)
-            this.sizeX = sizeX;
-    }
-
-    private void setSizeY(Integer sizeY) {
-        if(sizeY != null)
-            this.sizeY = sizeY;
+    private void setPolarYSize(Integer polarYSize) {
+        if(polarYSize != null)
+            this.polarYSize = polarYSize;
     }
 
     private void setSpiAPA102Speed(Integer spiAPA102Speed) {

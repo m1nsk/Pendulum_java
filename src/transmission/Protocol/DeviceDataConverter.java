@@ -40,7 +40,7 @@ public class DeviceDataConverter {
         ObjectWriter writer = objectMapper.writer(new DefaultPrettyPrinter());
         byte[] dataInfo = writer.writeValueAsBytes(bundleMap);
 
-        String header = DATA + ":" + dataInfo.length + ":" + imageBundle.length + ":" + Long.BYTES + '\n';
+        String header = DataType.COMMAND + ":" + dataInfo.length + ":" + imageBundle.length + ":" + Long.BYTES + '\n';
 
         byte[] data = concatArrays(Arrays.asList(header.getBytes(), dataInfo, imageBundle));
         CRC32 crc32 = new CRC32();
@@ -68,7 +68,7 @@ public class DeviceDataConverter {
         Integer infoBundleSize = tryParseInt(params.get(1));
         Integer imageBungleSize = tryParseInt(params.get(2));
         Integer crcSize = tryParseInt(params.get(3));
-        Integer bundleSize = infoBundleSize + imageBungleSize +  crcSize + 1;
+        Integer bundleSize = paramsString.getBytes().length + infoBundleSize + imageBungleSize +  crcSize + 1;
         return new BundleInfo(bundleSize, infoBundleSize, imageBungleSize, crcSize, dataType);
     }
 

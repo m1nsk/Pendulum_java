@@ -8,8 +8,8 @@ import java.io.IOException;
  * @author minsk
  */
 
-public class Pi4SPIDeviceSpiSelect extends Pi4SPIDevice {
-    public Pi4SPIDeviceSpiSelect(SpiDevice device) {
+public class Pi4SPIDeviceJSpiSelect extends Pi4jSPIDevice {
+    public Pi4SPIDeviceJSpiSelect(SpiDevice device) {
         super(device);
     }
 

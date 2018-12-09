@@ -5,7 +5,6 @@
  */
 package AHRS;
 
-import devices.sensorImplementations.MPU9250.MPU9250;
 import devices.sensors.Mpu9250Interface;
 import devices.sensors.dataTypes.TimestampedData3D;
 import java.io.IOException;
@@ -178,7 +177,7 @@ public class AHRS {
 
         //-------------------------------------------------------------------------
         System.out.println("Beginning Gyro calibration...\n");
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < 50; i++) {
             sensor.updateSensorData();
             TimestampedData3D gyr = sensor.getGyro();
             gx = gyr.getX();
@@ -195,9 +194,9 @@ public class AHRS {
 
             Thread.sleep(10);
         }
-        offset[0] /= 300.0;
-        offset[1] /= 300.0;
-        offset[2] /= 300.0;
+        offset[0] /= 50;
+        offset[1] /= 50;
+        offset[2] /= 50;
         
         System.out.println("Offsets are: " + offset[0] + " " + offset[1] + " " + offset[2]);
 

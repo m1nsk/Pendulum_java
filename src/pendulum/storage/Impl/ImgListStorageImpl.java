@@ -17,10 +17,12 @@ public class ImgListStorageImpl implements ImgListStorage {
     private int xSize;
     private int ySize;
     private int pointer = 0;
+    private int polarYSize;
 
-    public ImgListStorageImpl(int xSize, int ySize) {
+    public ImgListStorageImpl(int xSize, int ySize, int polarYSize) {
         this.xSize = xSize;
         this.ySize = ySize;
+        this.polarYSize = polarYSize;
         imgListBuffer = new ArrayList<>();
     }
 
@@ -85,16 +87,13 @@ public class ImgListStorageImpl implements ImgListStorage {
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
         //TODO: make polar coord conversion
-        for (int a = 0; a < xSize; a++) { //covert images to byteArray list
+        for (int a = 0; a < polarYSize; a++) { //covert images to byteArray list
             byte[] line = new byte[ySize * 3];
             for (int l = 0; l < ySize; l++) {
                 int rgb = polarConverter(a, l, bImg);
-//                int rgb = bImg.getRGB(i, j);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
                 System.arraycopy(bytes, 1, line, l * 3, 3);
-//                for (int i = 1; i < bytes.length; i++) {
-//                    line[l * 3 + i] = bytes[i];
-//                }
+
             }
             result.add(line);
         }
@@ -113,11 +112,11 @@ public class ImgListStorageImpl implements ImgListStorage {
     private int polarConverter(int a, int l, BufferedImage bImg) {
         int DELTA_X = xSize / 2;
         int BLACK_PIXEL = 1111 << 16; // 1111 0000 0000 0000
-        int x = (int) (DELTA_X - l * Math.cos(Math.toRadians((float)a / xSize * 180)));
+        int x = (int) (DELTA_X - l * Math.cos(Math.toRadians((float)a / polarYSize * 180)));
         if (x < 0 || x >= xSize) {
             return BLACK_PIXEL;
         } else {
-            int y = (int) (l * Math.sin(Math.toRadians((float)a / xSize * 180)));
+            int y = (int) (l * Math.sin(Math.toRadians((float)a / polarYSize * 180)));
             if (y < 0 || y >= ySize)
                 return BLACK_PIXEL;
             return bImg.getRGB(x, y) ;

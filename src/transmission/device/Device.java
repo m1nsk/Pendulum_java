@@ -38,10 +38,14 @@ public class Device implements ImageData, PropsData {
         return localInstance;
     }
 
-    public void setStorage(File file) throws IOException {
-        imageStorage = new StorageImageImpl(file);
-        propsStorage = new StoragePropsImpl(file);
-        loadFromStorage();
+    public void setStorage(File file) {
+        try {
+            imageStorage = new StorageImageImpl(file);
+            propsStorage = new StoragePropsImpl(file);
+            loadFromStorage();
+        } catch (Exception e) {
+
+        }
     }
 
     public void loadFromStorage() throws IOException {

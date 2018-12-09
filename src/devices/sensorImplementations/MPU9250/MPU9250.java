@@ -25,6 +25,7 @@ public class MPU9250 extends NineDOF {
         this.mpu9250 = mpu9250;
     }
 
+    @Override
     public void initialize() throws IOException, InterruptedException {
         initMPU9250();
     }

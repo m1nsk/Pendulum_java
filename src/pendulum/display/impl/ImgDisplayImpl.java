@@ -14,12 +14,10 @@ import java.util.stream.Collectors;
 abstract class ImgDisplayImpl implements ImgDisplay {
     private Apa102Output apa102Output;
     private List<byte[]> img = new ArrayList<>();
-    private int sizeX;
 
-    public ImgDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed, int sizeX, int ledNum) throws IOException{
+    public ImgDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed, int ledNum) throws IOException{
         Apa102Output.initSpi(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
         this.apa102Output = new Apa102Output(ledNum);
-        this.sizeX = sizeX;
     }
 
     @Override
