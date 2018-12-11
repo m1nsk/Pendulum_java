@@ -1,5 +1,7 @@
 package bluetooth;
 
+import Observer.EventManager;
+
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
@@ -11,8 +13,13 @@ import java.io.IOException;
 
 public class WaitThread implements Runnable{
 
-	/** Constructor */
-	public WaitThread() {
+	private static EventManager eventManager;
+
+	/**
+	 * Constructor
+	 */
+	public WaitThread(EventManager eventManager) {
+		WaitThread.eventManager = eventManager;
 	}
 	
 	@Override
@@ -53,7 +60,7 @@ public class WaitThread implements Runnable{
 				System.out.println("waiting for connection...");
 	            connection = notifier.acceptAndOpen();
 	            
-	            Thread processThread = new Thread(new ProcessConnectionThread(connection));
+	            Thread processThread = new Thread(new ProcessConnectionThread(connection, eventManager));
 	            processThread.start();
 	            
 			} catch (Exception e) {

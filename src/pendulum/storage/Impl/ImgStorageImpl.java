@@ -61,7 +61,7 @@ public class ImgStorageImpl implements ImgStorage {
 
     private List<byte[]> copyImg(String name) {
         List<byte[]> img = new ArrayList<>();
-        imgMap.getOrDefault(name, new ArrayList<>()).stream().forEach(item -> {
+        imgMap.getOrDefault(name, new ArrayList<>()).forEach(item -> {
             byte[] line = new byte[item.length];
             System.arraycopy(item, 0, line, 0, item.length);
             img.add(line);

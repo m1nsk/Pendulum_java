@@ -1,7 +1,9 @@
 package pendulum.stateMachine.Impl;
 
 import AHRS.Quaternion;
+import Observer.EventType;
 import devices.sensors.dataTypes.CircularArrayRing;
+import Observer.EventListener;
 import pendulum.display.ImgDisplay;
 import pendulum.stateMachine.PendulumStateMachine;
 import pendulum.storage.ImgListStorage;
@@ -9,21 +11,17 @@ import pendulum.storage.ImgListStorage;
 import java.io.IOException;
 import java.util.List;
 
-public class PendulumStateMachineImpl implements PendulumStateMachine {
+public class PendulumStateMachineImpl implements PendulumStateMachine, EventListener {
     private static Quaternion vertQ = new Quaternion((float) Math.sqrt(2) / 2, 0, (float) Math.sqrt(2) / 2, 0);
     private static int BUFFER_SIZE = 100;
     private static int MOVE_LIMIT_FLAG = 100;
     private MovementState state = MovementState.SLOW;
     private List<ImgDisplay> imgDisplayList;
     private ImgListStorage imgStorage;
-    private int sizeX;
-    private int polarYSize;
     private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(BUFFER_SIZE);
     private CircularArrayRing<Integer> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
 
-    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage, int sizeX, int polarYSize) {
-        this.sizeX = sizeX;
-        this.polarYSize = polarYSize;
+    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage) {
         this.imgDisplayList = imgDisplayList;
         this.imgStorage = imgStorage;
         imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.current()));
@@ -31,11 +29,9 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
 
     @Override
     public void readNewSample(Quaternion q) throws IOException {
-        System.out.println(quaternionToLine(q));
         addNewSample(q);
         int line = quaternionToLine(q);
         lineValueBuffer.add(line);
-//        System.out.println(state);
         if(checkTurn()) {
             imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.next()));
         }
@@ -102,6 +98,15 @@ public class PendulumStateMachineImpl implements PendulumStateMachine {
             }
         }
         return false;
+    }
+
+    @Override
+    public void update(EventType type) {
+        if(type.equals(EventType.STORAGE_UPDATED)) {
+            imgStorage.loadData();
+            imgDisplayList.forEach(display -> display.setImg(imgStorage.current()));
+
+        }
     }
 
     enum MovementState {

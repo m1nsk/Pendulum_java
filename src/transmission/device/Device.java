@@ -2,10 +2,7 @@ package transmission.device;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Device implements ImageData, PropsData {
     private static final Integer LED_NUM = 5;
@@ -29,28 +26,25 @@ public class Device implements ImageData, PropsData {
                 }
             }
         }
-        try {
-            if(localInstance.imageStorage != null && localInstance.propsStorage != null)
-                localInstance.loadFromStorage();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(localInstance.imageStorage != null && localInstance.propsStorage != null)
+            localInstance.loadFromStorage();
         return localInstance;
     }
 
     public void setStorage(File file) {
-        try {
-            imageStorage = new StorageImageImpl(file);
-            propsStorage = new StoragePropsImpl(file);
-            loadFromStorage();
-        } catch (Exception e) {
-
-        }
+        imageStorage = new StorageImageImpl(file);
+        propsStorage = new StoragePropsImpl(file);
+        loadFromStorage();
     }
 
-    public void loadFromStorage() throws IOException {
-        images = imageStorage.loadData();
-        props = propsStorage.loadData();
+    public void loadFromStorage() {
+        try {
+            images = imageStorage.loadData();
+            props = propsStorage.loadData();
+        } catch (IOException e) {
+            images = Collections.emptyList();
+            props = Collections.emptyMap();
+        }
     }
 
     @Override
@@ -90,8 +84,8 @@ public class Device implements ImageData, PropsData {
 
     @Override
     public void saveToStorage() throws IOException {
-            imageStorage.storeData(images);
-            propsStorage.storeData(props);
+        imageStorage.storeData(images);
+        propsStorage.storeData(props);
     }
 
     @Override

@@ -1,19 +1,24 @@
 package bluetooth;
 
+import Observer.EventManager;
+import Observer.EventType;
 import transmission.Protocol.BundleInfo;
 import transmission.Protocol.DataType;
 import transmission.Protocol.DeviceDataConverter;
 import transmission.device.Device;
 import transmission.device.DeviceData;
 
-import javax.imageio.ImageIO;
 import javax.microedition.io.StreamConnection;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class ProcessConnectionThread implements Runnable{
 
     private StreamConnection mConnection;
+
+    private EventManager eventManager;
 
     private File storage = new File("/home/minsk/IdeaProjects/Pendulum_java/src/storage/images/");
 
@@ -21,8 +26,9 @@ public class ProcessConnectionThread implements Runnable{
 
     private Device device = Device.getInstance();
 
-    public ProcessConnectionThread(StreamConnection connection)
+    public ProcessConnectionThread(StreamConnection connection, EventManager eventManager)
     {
+        this.eventManager = eventManager;
         mConnection = connection;
         if(!storage.exists()) {
             storage.mkdir();
@@ -46,7 +52,6 @@ public class ProcessConnectionThread implements Runnable{
             int counter = 0;
             byte[] buffer = new byte[2048];
 
-            DataType dataType;
             BundleInfo bundleInfo = null;
 
             while (counter < bytes.length) {
@@ -62,6 +67,9 @@ public class ProcessConnectionThread implements Runnable{
             if(bundleInfo.getType().equals(DataType.DATA)) {
                 DeviceData deviceData = deviceDataConverter.bytesToDeviceData(bytes);
                 saveDeviceDataToStorage(deviceData);
+                eventManager.notify(EventType.STORAGE_UPDATED);
+            } else if(bundleInfo.getType().equals(DataType.COMMAND)) {
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,14 +81,5 @@ public class ProcessConnectionThread implements Runnable{
         device.setLedNum(deviceData.getLedNum());
         device.setBrightness(deviceData.getBrightness());
         device.saveToStorage();
-    }
-
-    private BufferedImage createImageFromBytes(byte[] imageData) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
-        try {
-            return ImageIO.read(bais);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

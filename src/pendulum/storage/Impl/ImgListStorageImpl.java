@@ -1,6 +1,7 @@
 package pendulum.storage.Impl;
 
 import pendulum.storage.ImgListStorage;
+import transmission.device.Device;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ImgListStorageImpl implements ImgListStorage {
+    private Device device = Device.getInstance();
     private List<List<byte[]>> imgListBuffer;
     private int xSize;
     private int ySize;
@@ -24,6 +26,7 @@ public class ImgListStorageImpl implements ImgListStorage {
         this.ySize = ySize;
         this.polarYSize = polarYSize;
         imgListBuffer = new ArrayList<>();
+        loadData();
     }
 
     private boolean isBufferEmpty() {
@@ -38,7 +41,7 @@ public class ImgListStorageImpl implements ImgListStorage {
     }
 
     @Override
-    public List<byte[]> next() {
+    public synchronized List<byte[]> next() {
         if(imgListBuffer.isEmpty())
             return current();
         pointer = ++pointer % imgListBuffer.size();
@@ -46,39 +49,26 @@ public class ImgListStorageImpl implements ImgListStorage {
     }
 
     @Override
-    public List<byte[]> previous() {
+    public synchronized List<byte[]> previous() {
         if(imgListBuffer.isEmpty())
             return current();
         pointer = (--pointer + imgListBuffer.size()) % imgListBuffer.size();
         return current();
     }
 
-
     @Override
-    public synchronized void loadData(Map<String, File> imgMap) throws IOException {
-        imgListBuffer = imgMap.entrySet().stream()
-                .sorted((e1, e2) -> {
-                    Integer key1 = tryParseInt(e1.getKey());
-                    Integer key2 = tryParseInt(e2.getKey());
-                    if(key1 == null || key2 == null)
-                        return -1;
-                    return key1.compareTo(key2);
-                }).filter(entry -> entry.getKey() != null).map(entry -> {
+    public synchronized void loadData() {
+        device.loadFromStorage();
+        List<File> images = device.getImageList();
+        imgListBuffer = images.stream().map(img -> {
                     try {
-                        return convertImage(entry.getValue());
+                        return convertImage(img);
                     } catch (IOException e) {
                         return null;
                     }
                 }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    private Integer tryParseInt(String value) {
-        try{
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        this.pointer = 0;
     }
 
     private List<byte[]> convertImage(File file) throws IOException {
