@@ -17,10 +17,9 @@ import java.util.zip.CRC32;
 
 public class DeviceDataConverter {
     private ObjectMapper objectMapper = new ObjectMapper();
-    private final String DATA = "DAT";
-    private final String storageFolder;
+    private File storageFolder;
 
-    public DeviceDataConverter(String storageFolder) {
+    public DeviceDataConverter(File storageFolder) {
         this.storageFolder = storageFolder;
     }
 
@@ -40,7 +39,7 @@ public class DeviceDataConverter {
         ObjectWriter writer = objectMapper.writer(new DefaultPrettyPrinter());
         byte[] dataInfo = writer.writeValueAsBytes(bundleMap);
 
-        String header = DataType.COMMAND + ":" + dataInfo.length + ":" + imageBundle.length + ":" + Long.BYTES + '\n';
+        String header = DataType.DATA + ":" + dataInfo.length + ":" + imageBundle.length + ":" + Long.BYTES + '\n';
 
         byte[] data = concatArrays(Arrays.asList(header.getBytes(), dataInfo, imageBundle));
         CRC32 crc32 = new CRC32();
@@ -86,7 +85,7 @@ public class DeviceDataConverter {
             Integer offset = paramsString.getBytes().length;
 
             Map<String, Object> bundle = getBundle(bytes, params, offset);
-            setProps(deviceData, bundle);
+            deviceData.setProps(getProps(bundle));
 
             offset += params.get(0);
 
@@ -116,14 +115,13 @@ public class DeviceDataConverter {
     }
 
     private static void saveBytesToFile(File file, byte[] imageBytes) throws IOException {
-        FileOutputStream fos=new FileOutputStream(file);
+        FileOutputStream fos = new FileOutputStream(file);
         fos.write(imageBytes);
         fos.close();
     }
 
-    private static void setProps(DeviceData deviceData, Map<String, Object> bundle) {
-        Map<String, String> props = (HashMap) bundle.get("props");
-        deviceData.setProps(props);
+    private static Map<String, String> getProps(Map<String, Object> bundle) {
+        return  (Map) bundle.get("props");
     }
 
     private static boolean checkCRC(byte[] bytes) {
@@ -187,16 +185,6 @@ public class DeviceDataConverter {
             this.size = size;
             this.name = name;
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        DeviceDataConverter deviceDataConverter = new DeviceDataConverter("/home/minsk/IdeaProjects/Pendulum_java/src/storage/images/");
-        DeviceData deviceData = new DeviceData();
-        deviceData.addToImageList(Collections.singletonList(new File("/home/minsk/IdeaProjects/Pendulum_java/src/storage/images/1.jpg")));
-        deviceData.addToImageList(Collections.singletonList(new File("/home/minsk/IdeaProjects/Pendulum_java/src/storage/images/2.jpg")));
-        deviceData.addToImageList(Collections.singletonList(new File("/home/minsk/IdeaProjects/Pendulum_java/src/storage/images/3.jpg")));
-        byte[] bytes = deviceDataConverter.deviceDataToBytes(deviceData);
-        DeviceData deviceData1 = deviceDataConverter.bytesToDeviceData(bytes);
     }
 }
 

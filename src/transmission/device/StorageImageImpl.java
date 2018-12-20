@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,9 +34,16 @@ public class StorageImageImpl implements Storage<List<File>> {
 
     private List<File> loadImages() throws IOException {
         File imagesFile = new File(imgDir + "/images.txt");
-        List<String> imageList = new ArrayList<>(Arrays.asList(objectMapper.readValue(imagesFile, String[].class)));
-        List<File> images = imageList.stream().map(File::new).collect(Collectors.toList());
-        return images;
+        if(imagesFile.exists()) {
+            List<String> imageList = new ArrayList<>(Arrays.asList(objectMapper.readValue(imagesFile, String[].class)));
+            List<File> images = imageList.stream().map(File::new).collect(Collectors.toList());
+            for (int i = 0; i < images.size(); i++) {
+                if(!images.get(i).exists())
+                    return new ArrayList<>();
+            }
+            return images;
+        }
+        return new ArrayList<>();
     }
 
     @Override

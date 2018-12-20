@@ -1,8 +1,7 @@
 package launcher;
 
-import Observer.EventType;
 import bluetooth.WaitThread;
-import Observer.EventManager;
+import observer.EventManager;
 
 public class Launcher {
     private static EventManager eventManager = new EventManager();

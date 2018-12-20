@@ -15,17 +15,14 @@ import java.util.stream.Collectors;
 
 public class ImgListStorageImpl implements ImgListStorage {
     private Device device = Device.getInstance();
-    private List<List<byte[]>> imgListBuffer;
+    private List<List<byte[]>> imgListBuffer = new ArrayList<>();
     private int xSize;
     private int ySize;
     private int pointer = 0;
     private int polarYSize;
 
-    public ImgListStorageImpl(int xSize, int ySize, int polarYSize) {
-        this.xSize = xSize;
-        this.ySize = ySize;
+    public ImgListStorageImpl(int polarYSize) {
         this.polarYSize = polarYSize;
-        imgListBuffer = new ArrayList<>();
         loadData();
     }
 
@@ -58,6 +55,9 @@ public class ImgListStorageImpl implements ImgListStorage {
 
     @Override
     public synchronized void loadData() {
+        Integer ledNum = device.getLedNum();
+        this.ySize = ledNum * 144;
+        this.xSize = ledNum * 2 * 144;
         device.loadFromStorage();
         List<File> images = device.getImageList();
         imgListBuffer = images.stream().map(img -> {

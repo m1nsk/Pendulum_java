@@ -1,6 +1,6 @@
 package bluetooth;
 
-import Observer.EventManager;
+import observer.EventManager;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;

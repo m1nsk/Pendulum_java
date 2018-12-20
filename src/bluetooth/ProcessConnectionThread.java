@@ -1,7 +1,8 @@
 package bluetooth;
 
-import Observer.EventManager;
-import Observer.EventType;
+import observer.EventManager;
+import observer.EventType;
+import pendulum.StorageFileGetter;
 import transmission.Protocol.BundleInfo;
 import transmission.Protocol.DataType;
 import transmission.Protocol.DeviceDataConverter;
@@ -9,7 +10,6 @@ import transmission.device.Device;
 import transmission.device.DeviceData;
 
 import javax.microedition.io.StreamConnection;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,21 +20,14 @@ public class ProcessConnectionThread implements Runnable{
 
     private EventManager eventManager;
 
-    private File storage = new File("/home/minsk/IdeaProjects/Pendulum_java/src/storage/images/");
-
     private DeviceDataConverter deviceDataConverter;
 
     private Device device = Device.getInstance();
 
     public ProcessConnectionThread(StreamConnection connection, EventManager eventManager)
-    {
-        this.eventManager = eventManager;
+    {  this.eventManager = eventManager;
         mConnection = connection;
-        if(!storage.exists()) {
-            storage.mkdir();
-        }
-        deviceDataConverter = new DeviceDataConverter(storage.getPath());
-        device.setStorage(storage);
+        deviceDataConverter = new DeviceDataConverter(new StorageFileGetter().getStorage());
     }
 
     @Override

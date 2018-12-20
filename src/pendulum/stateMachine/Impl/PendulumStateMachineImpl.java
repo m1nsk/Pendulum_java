@@ -1,9 +1,9 @@
 package pendulum.stateMachine.Impl;
 
 import AHRS.Quaternion;
-import Observer.EventType;
+import observer.EventType;
 import devices.sensors.dataTypes.CircularArrayRing;
-import Observer.EventListener;
+import observer.EventListener;
 import pendulum.display.ImgDisplay;
 import pendulum.stateMachine.PendulumStateMachine;
 import pendulum.storage.ImgListStorage;
@@ -105,7 +105,6 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         if(type.equals(EventType.STORAGE_UPDATED)) {
             imgStorage.loadData();
             imgDisplayList.forEach(display -> display.setImg(imgStorage.current()));
-
         }
     }
 

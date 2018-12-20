@@ -13,7 +13,6 @@ public class Apa102Output {
     private byte[] ledBuffer;
     private int i_firstLedFrame;
     private int i_endFrame;
-    private int numLeds;
     private Apa102Output.ColorOrder colorOrder;
 
     public static void initSpi() throws IOException {
@@ -24,11 +23,11 @@ public class Apa102Output {
         spi = SpiFactory.getInstance(spiChannel, spiSpeed, spiMode);
     }
 
-    public Apa102Output(int numLeds) {
-        this(numLeds, ColorConfig.BGR);
+    public Apa102Output() {
+        this(ColorConfig.BGR);
     }
 
-    public Apa102Output(int numLeds, Apa102Output.ColorOrder colorConfig) {
+    public Apa102Output(Apa102Output.ColorOrder colorConfig) {
         if (spi == null) {
             throw new RuntimeException("Call .initSpi() before constructing new output!");
         } else {

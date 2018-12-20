@@ -26,7 +26,7 @@ public class HDDLoader {
                 File[] files = imageFolder.listFiles();
                 Map<String, File> images = Arrays.stream(files).filter(file -> ImageUtils.IMAGE_EXTENSION_SET.contains(ImageUtils.getFileExtension(file)))
                         .collect(Collectors.toMap(ImageUtils::getFileName, image -> image));
-                storage.loadData(images);
+                storage.loadData();
             }
         }
     }

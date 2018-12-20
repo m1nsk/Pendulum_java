@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class StoragePropsImpl implements Storage<Map<String, String>> {
@@ -28,8 +29,12 @@ public class StoragePropsImpl implements Storage<Map<String, String>> {
 
     private Map<String, String> loadProps() throws IOException {
         File propsFile = new File(imgDir + "/props.txt");
-        Map<String, String> props = objectMapper.readValue(propsFile, new TypeReference<Map<String, String>>(){});
-        return props;
+        if(propsFile.exists()) {
+            Map<String, String> props = objectMapper.readValue(propsFile, new TypeReference<Map<String, String>>() {
+            });
+            return props;
+        }
+        return new HashMap<>();
     }
 
     @Override

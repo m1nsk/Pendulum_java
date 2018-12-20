@@ -23,9 +23,7 @@ public class PendulumParams {
     private Integer i2cBus = I2CBus.BUS_1;
     private SpiChannel spiApa102Channel = SpiChannel.CS1;
     private Integer displayFrequency = 300;
-    private static final String PATH_TO_STORAGE = "storage/";
-    private ClassLoader classLoader = getClass().getClassLoader();
-    private String storagePath = new File(classLoader.getResource(PATH_TO_STORAGE).getFile()).getPath();
+    private String storagePath = new StorageFileGetter().getStorage().getPath();
 
     private PendulumParams() {
         initParamFromResources();

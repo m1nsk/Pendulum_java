@@ -2,6 +2,8 @@ package pendulum.display.impl;
 
 import APA102.Apa102Output;
 import com.pi4j.io.spi.SpiChannel;
+import com.pi4j.io.spi.SpiDevice;
+import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
 import pendulum.display.ImgDisplay;
 
@@ -12,12 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 abstract class ImgDisplayImpl implements ImgDisplay {
-    private Apa102Output apa102Output;
+
+    private static SpiDevice spi = null;
     private List<byte[]> img = new ArrayList<>();
 
-    public ImgDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed, int ledNum) throws IOException{
-        Apa102Output.initSpi(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
-        this.apa102Output = new Apa102Output(ledNum);
+    public ImgDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed) throws IOException{
+        spi = SpiFactory.getInstance(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
     }
 
     @Override
@@ -34,7 +36,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
     abstract int offsetLineNum(int lineNum);
 
     protected void writeStrip(int lineNum) throws IOException {
-        apa102Output.writeStrip(img.get(lineNum));
+        spi.write(img.get(lineNum));
     }
 
     @Override
