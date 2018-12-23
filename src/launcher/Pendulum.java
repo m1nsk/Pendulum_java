@@ -47,6 +47,7 @@ public class Pendulum implements Runnable {
             PendulumStateMachine stateMachine = new PendulumStateMachineImpl(Collections.singletonList(imgDisplay), imgStorage);
 
             eventManager.subscribe(EventType.STORAGE_UPDATED, (EventListener) stateMachine);
+            eventManager.subscribe(EventType.MESSAGE_RECEIVE, (EventListener) stateMachine);
 
             I2CBus bus = I2CFactory.getInstance(params.getI2cBus());
             ProtocolInterface protocolInterfaceI2C = new Pi4jI2CDevice(bus.getDevice(0x68));

@@ -35,7 +35,19 @@ abstract class ImgDisplayImpl implements ImgDisplay {
     abstract int offsetLineNum(int lineNum);
 
     protected void writeStrip(int lineNum) throws IOException {
-        spi.write(img.get(lineNum));
+        writeLine(img.get(lineNum));
+    }
+
+    private void writeLine(byte[] bytes) throws IOException {
+        if (bytes.length < 2048) {
+            spi.write(bytes);
+        } else {
+            int startI;
+            for(startI = 0; startI <= bytes.length; startI += 2048) {
+                spi.write(bytes, startI, 2048);
+            }
+
+        }
     }
 
     @Override

@@ -75,6 +75,11 @@ public class ImgListStorageImpl implements ImgListStorage {
         this.pointer = 0;
     }
 
+    @Override
+    public void chooseImgByName(String name) {
+        this.pointer = names.get(name);
+    }
+
     private List<byte[]> convertImage(File file) throws IOException {
         List<byte[]> result = new ArrayList<>();
 

@@ -30,7 +30,7 @@ public class DeviceCommandConverter {
         ObjectWriter writer = objectMapper.writer(new DefaultPrettyPrinter());
         byte[] body = writer.writeValueAsBytes(bundleMap);
 
-        String header = DataType.DATA + ":" + body.length + ":" + Long.BYTES + '\n';
+        String header = DataType.COMMAND + ":" + body.length + ":" + Long.BYTES + '\n';
 
         byte[] data = ConvertorUtils.concatArrays(Arrays.asList(header.getBytes(), body));
         CRC32 crc32 = new CRC32();
@@ -40,7 +40,7 @@ public class DeviceCommandConverter {
 
 
     public Command bytesToCommand(byte[] bytes) throws Exception {
-        if(checkCRC(bytes)) {
+        if(ConvertorUtils.checkCRC(bytes)) {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
             String paramsString = br.readLine();
             List<Integer> params = Arrays.stream(paramsString.split(":"))
@@ -56,15 +56,6 @@ public class DeviceCommandConverter {
             return command;
         }
         return null;
-    }
-
-
-    private static boolean checkCRC(byte[] bytes) {
-        CRC32 crc32 = new CRC32();
-        byte[] crcBytes = new byte[Long.BYTES];
-        System.arraycopy(bytes, bytes.length - crcBytes.length, crcBytes, 0 , crcBytes.length);
-        crc32.update(bytes, 0, bytes.length - crcBytes.length);
-        return ConvertorUtils.bytesToLong(crcBytes) == crc32.getValue();
     }
 
     private Map<String, Object> getBundle(byte[] bytes, List<Integer> params, Integer offset) throws IOException {

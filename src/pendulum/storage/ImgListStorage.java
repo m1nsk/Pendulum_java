@@ -9,4 +9,6 @@ public interface ImgListStorage {
     List<byte[]> previous();
 
     void loadData();
+
+    void chooseImgByName(String name);
 }

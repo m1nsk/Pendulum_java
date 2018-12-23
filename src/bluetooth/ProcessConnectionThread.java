@@ -28,6 +28,7 @@ public class ProcessConnectionThread implements Runnable{
     {  this.eventManager = eventManager;
         mConnection = connection;
         deviceDataConverter = new DeviceDataConverter(new StorageFileGetter().getStorage());
+        deviceCommandConverter = new DeviceCommandConverter();
     }
 
     @Override
