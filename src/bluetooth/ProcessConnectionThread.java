@@ -3,9 +3,7 @@ package bluetooth;
 import observer.EventManager;
 import observer.EventType;
 import pendulum.StorageFileGetter;
-import transmission.Protocol.BundleInfo;
-import transmission.Protocol.DataType;
-import transmission.Protocol.DeviceDataConverter;
+import transmission.Protocol.*;
 import transmission.device.Device;
 import transmission.device.DeviceData;
 
@@ -21,6 +19,8 @@ public class ProcessConnectionThread implements Runnable{
     private EventManager eventManager;
 
     private DeviceDataConverter deviceDataConverter;
+
+    private DeviceCommandConverter deviceCommandConverter;
 
     private Device device = Device.getInstance();
 
@@ -50,8 +50,8 @@ public class ProcessConnectionThread implements Runnable{
             while (counter < bytes.length) {
                 int command = inputStream.read(buffer);
                 if(!bytesFlag) {
-                    bundleInfo = deviceDataConverter.getBundleInfo(buffer);
-                    bytes = new byte[bundleInfo.getBundleSize()];
+                    bundleInfo = DataTypeHelper.getBundleInfo(buffer);
+                    bytes = new byte[bundleInfo.getFullSize()];
                     bytesFlag = true;
                 }
                 System.arraycopy(buffer, 0, bytes, counter, command);
@@ -62,7 +62,9 @@ public class ProcessConnectionThread implements Runnable{
                 saveDeviceDataToStorage(deviceData);
                 eventManager.notify(EventType.STORAGE_UPDATED);
             } else if(bundleInfo.getType().equals(DataType.COMMAND)) {
-                return;
+                Command command = deviceCommandConverter.bytesToCommand(bytes);
+                CommandQueue.offer(command);
+                eventManager.notify(EventType.MESSAGE_RECEIVE);
             }
         } catch (Exception e) {
             e.printStackTrace();

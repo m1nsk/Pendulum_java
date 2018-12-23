@@ -8,9 +8,6 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class BundleInfo {
-    Integer bundleSize;
-    Integer infoBundleSize;
-    Integer imageBundleSize;
-    Integer crcSize;
+    Integer fullSize;
     DataType type;
 }

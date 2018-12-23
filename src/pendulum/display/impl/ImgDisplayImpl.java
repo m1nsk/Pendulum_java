@@ -1,6 +1,5 @@
 package pendulum.display.impl;
 
-import APA102.Apa102Output;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
 import com.pi4j.io.spi.SpiFactory;

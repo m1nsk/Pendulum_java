@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
 
 public class ImgListStorageImpl implements ImgListStorage {
     private Device device = Device.getInstance();
+    private Map<String, Integer> names = new HashMap<>();
     private List<List<byte[]>> imgListBuffer = new ArrayList<>();
     private int xSize;
     private int ySize;
     private int pointer = 0;
     private int polarYSize;
+    private double brightness;
 
     public ImgListStorageImpl(int polarYSize) {
         this.polarYSize = polarYSize;
@@ -58,16 +60,18 @@ public class ImgListStorageImpl implements ImgListStorage {
         Integer ledNum = device.getLedNum();
         this.ySize = ledNum * 144;
         this.xSize = ledNum * 2 * 144;
+        this.brightness = device.getBrightness();
         device.loadFromStorage();
         List<File> images = device.getImageList();
-        imgListBuffer = images.stream().map(img -> {
-                    try {
-                        return convertImage(img);
-                    } catch (IOException e) {
-                        return null;
-                    }
-                }).filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        imgListBuffer.clear();
+        names.clear();
+        for (int i = 0; i < images.size(); i++) {
+            try {
+                imgListBuffer.add(convertImage(images.get(i)));
+                names.put(images.get(i).getName(), i);
+            } catch (IOException ignored) {
+            }
+        }
         this.pointer = 0;
     }
 
@@ -78,12 +82,16 @@ public class ImgListStorageImpl implements ImgListStorage {
         bImg = resizeImg(bImg);
         //TODO: make polar coord conversion
         for (int a = 0; a < polarYSize; a++) { //covert images to byteArray list
-            byte[] line = new byte[ySize * 3];
+            byte[] line = new byte[ySize * 4];
             for (int l = 0; l < ySize; l++) {
                 int rgb = polarConverter(a, l, bImg);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
-                System.arraycopy(bytes, 1, line, l * 3, 3);
-
+                if(brightness != 10.0) {
+                    bytes[1] = (byte)((int)bytes[1] * brightness / 10);
+                    bytes[2] = (byte)((int)bytes[2] * brightness / 10);
+                    bytes[3] = (byte)((int)bytes[3] * brightness / 10);
+                }
+                System.arraycopy(bytes, 0, line, l * 4, 4);
             }
             result.add(line);
         }
@@ -109,7 +117,7 @@ public class ImgListStorageImpl implements ImgListStorage {
             int y = (int) (l * Math.sin(Math.toRadians((float)a / polarYSize * 180)));
             if (y < 0 || y >= ySize)
                 return BLACK_PIXEL;
-            return bImg.getRGB(x, y) ;
+            return bImg.getRGB(x, y);
         }
     }
 }

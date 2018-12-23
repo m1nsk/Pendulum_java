@@ -7,8 +7,8 @@ import java.io.IOException;
 
 public class ImgFirstDisplayImpl extends ImgDisplayImpl {
 
-    public ImgFirstDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed, int sizeX, int ledNum) throws IOException {
-        super(spiChannel, spiAPA102Speed, ledNum);
+    public ImgFirstDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed, int sizeX) throws IOException {
+        super(spiChannel, spiAPA102Speed);
     }
 
     @Override
