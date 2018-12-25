@@ -42,9 +42,9 @@ abstract class ImgDisplayImpl implements ImgDisplay {
         if (bytes.length < 2048) {
             spi.write(bytes);
         } else {
-            int startI;
-            for(startI = 0; startI <= bytes.length; startI += 2048) {
-                spi.write(bytes, startI, 2048);
+            int i;
+            for(i = 0; i <= bytes.length; i += 2048) {
+                spi.write(bytes, i, 2048);
             }
 
         }

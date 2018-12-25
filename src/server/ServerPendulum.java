@@ -1,7 +1,7 @@
 package server;
 
 import fi.iki.elonen.NanoHTTPD;
-import pendulum.storage.ImgStorage;
+import pendulum.storage.ImgListStorage;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 
 public class ServerPendulum extends NanoHTTPD {
-    private ImgStorage imgStorage;
+    private ImgListStorage imgStorage;
     private final String imgName = "img";
 
-    public ServerPendulum(ImgStorage imgStorage) throws IOException {
+    public ServerPendulum(ImgListStorage imgStorage) throws IOException {
         super(8080);
         this.imgStorage = imgStorage;
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
@@ -71,11 +71,7 @@ public class ServerPendulum extends NanoHTTPD {
             instructions.add(file.getName());
         }
 
-        try {
-            imgStorage.loadData(fileMap, instructions);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        imgStorage.loadData();
         return getLoadPage();
     }
 }
