@@ -19,6 +19,7 @@ public class ImageConverter {
     private int ySize;
     private int polarYSize;
     private double brightness;
+    private final int BLACK_PIXEL = 0b1111 << 12;
 
     public ImageConverter(int polarYSize) {
         this.polarYSize = polarYSize;
@@ -56,8 +57,7 @@ public class ImageConverter {
     }
 
     private int polarConverter(int a, int l, BufferedImage bImg) {
-        int DELTA_X = xSize / 2;
-        int BLACK_PIXEL = 0b1111 << 12; // 1111 0000 0000 0000
+        int DELTA_X = xSize / 2; // 1111 0000 0000 0000
         int x = (int) (DELTA_X - l * Math.cos(Math.toRadians((float)a / polarYSize * 180)));
         if (x < 0 || x >= xSize) {
             return BLACK_PIXEL;
