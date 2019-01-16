@@ -12,6 +12,7 @@ import transmission.Protocol.CommandQueue;
 import transmission.Protocol.CommandType;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 public class PendulumStateMachineImpl implements PendulumStateMachine, EventListener {
@@ -22,7 +23,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     private List<ImgDisplay> imgDisplayList;
     private ImgListStorage imgStorage;
     private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(BUFFER_SIZE);
-    private CircularArrayRing<Integer> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
+    private CircularArrayRing<Double> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
 
     public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage) {
         this.imgDisplayList = imgDisplayList;
@@ -33,12 +34,13 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     @Override
     public void readNewSample(Quaternion q) throws IOException {
         addNewSample(q);
-        int line = quaternionToLine(q);
+        Double line = Math.ceil(quaternionToLine(q));
+//        System.out.println(line);
         lineValueBuffer.add(line);
         if(checkTurn()) {
             imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.next()));
         }
-        displayLine(line);
+        displayLine(line.intValue());
     }
 
     @Override
@@ -51,6 +53,12 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         imgStorage.previous();
     }
 
+    @Override
+    public void interpolateNewPosition() {
+        Double delta = lineValueBuffer.get(0) - lineValueBuffer.get(1);
+        lineValueBuffer.add(lineValueBuffer.get(0) + delta);
+    }
+
     protected void displayLine(int line) throws IOException {
         for(ImgDisplay imgDisplay: imgDisplayList){
             imgDisplay.displayLine(line);
@@ -61,8 +69,8 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         sampleBuffer.add(q);
     }
 
-    protected int quaternionToLine(Quaternion q) {
-        return (int) (90 + Quaternion.multiply(q, vertQ).getXp() * 2 * 90 / Math.sqrt(2));
+    protected double quaternionToLine(Quaternion q) {
+        return 90 + Quaternion.multiply(q, vertQ).getXp() * 2 * 90 / Math.sqrt(2);
     }
 
     private boolean checkTurn() {
@@ -70,9 +78,9 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         int moveTurnLimit = 7;
         if(lineValueBuffer.size() > windowSize) {
             int size = lineValueBuffer.size() - 1;
-            int start = lineValueBuffer.get(size - windowSize);
-            int middle = lineValueBuffer.get(size - windowSize / 2);
-            int end = lineValueBuffer.get(size);
+            double start = lineValueBuffer.get(size - windowSize);
+            double middle = lineValueBuffer.get(size - windowSize / 2);
+            double end = lineValueBuffer.get(size);
             if(Math.abs(start - end) < moveTurnLimit) {
                 state = MovementState.SLOW;
             }

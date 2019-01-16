@@ -16,13 +16,13 @@ import java.util.Properties;
 @Setter
 public class PendulumParams {
     private static volatile PendulumParams instance;
-    private Integer polarYSize = 100;
+    private Integer polarYSize = 360;
     private Integer spiAPA102Speed = 1_000_000;
     private Integer spiSensorSpeed = 1_000_000;
     private SpiChannel spiSensorChannel = SpiChannel.CS0;
     private Integer i2cBus = I2CBus.BUS_1;
     private SpiChannel spiApa102Channel = SpiChannel.CS1;
-    private Integer displayFrequency = 300;
+    private Integer displayFrequency = 720;
     private String storagePath = new StorageFileGetter().getStorage().getPath();
 
     private PendulumParams() {

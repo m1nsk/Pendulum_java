@@ -21,6 +21,8 @@ import pendulum.storage.Impl.ImgListStorageImpl;
 import transmission.device.Device;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 
 
@@ -62,11 +64,18 @@ public class Pendulum implements Runnable {
             AHRS ahrs = new AHRS(mpu9250);
             ahrs.setGyroOffset();
 
-            while (true) {
+            long t1 = System.nanoTime();
+            int counter = 0;
+            while ((System.nanoTime() - t1) / 1000000000 <= 10) {
                 ahrs.imuLoop();
-                stateMachine.readNewSample(ahrs.getQ());
-                Thread.sleep(1000 / params.getDisplayFrequency());
+                counter++;
+                if(counter++ % 3 == 0) {
+                    stateMachine.readNewSample(ahrs.getQ());
+                } else {
+                    stateMachine.interpolateNewPosition();
+                }
             }
+            System.out.println(counter + " counter");
         } catch (Exception e) {
                 throw new RuntimeException(e);
         }

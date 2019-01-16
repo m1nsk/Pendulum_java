@@ -18,6 +18,8 @@ public class MPU9250 extends NineDOF {
     static final double G_SI = 9.80665;
     static final double PI = 3.14159;
 
+    private static int counter = 0;
+
     private final ProtocolInterface mpu9250;
 
     public MPU9250(ProtocolInterface mpu9250, int sampleRate) {
@@ -64,8 +66,8 @@ public class MPU9250 extends NineDOF {
     @Override
     public void updateSensorData() throws IOException {
         float x, y, z;
-        short registers[] = new short[3];
-        registers = read16BitRegisters(mpu9250, Registers.ACCEL_XOUT_H.getAddress(), 3);
+        short registers[] = new short[6];
+        registers = read16BitRegisters(mpu9250, Registers.ACCEL_XOUT_H.getAddress(), 6);
 //        System.out.println(registers[0] + " " + registers[1] + " " + registers[2]);
 
         x = (float) ((registers[0]) * accScale.getRes() * G_SI); // transform from raw data to g
@@ -79,30 +81,31 @@ public class MPU9250 extends NineDOF {
         acc = new TimestampedData3D(x, y, z);
 
 //        System.out.println(acc);
-        registers = read16BitRegisters(mpu9250, Registers.GYRO_XOUT_H.getAddress(), 3);
+//        registers = read16BitRegisters(mpu9250, Registers.GYRO_XOUT_H.getAddress(), 3);
 //        System.out.println(registers[0] + " " + registers[1] + " " + registers[2] );
 
-        x = (float) ((float) registers[0] * gyrScale.getRes() * (PI / 180)); // transform from raw data to degrees/s
-        y = (float) ((float) registers[1] * gyrScale.getRes() * (PI / 180)); // transform from raw data to degrees/s
-        z = (float) ((float) registers[2] * gyrScale.getRes() * (PI / 180)); // transform from raw data to degrees/s
+        x = (float) ((float) registers[3] * gyrScale.getRes() * (PI / 180)); // transform from raw data to degrees/s
+        y = (float) ((float) registers[4] * gyrScale.getRes() * (PI / 180)); // transform from raw data to degrees/s
+        z = (float) ((float) registers[5] * gyrScale.getRes() * (PI / 180)); // transform from raw data to degrees/s
 
         gyr = new TimestampedData3D(x, y, z);
 //        System.out.println(gyr);
 
-        byte rawData[] = mpu9250.read(Registers.TEMP_OUT_H.getAddress(), 2);  // Read the two raw data registers sequentially into data array
+//        byte rawData[] = mpu9250.read(Registers.TEMP_OUT_H.getAddress(), 2);  // Read the two raw data registers sequentially into data array
 
-        mpu9250.read(Registers.TEMP_OUT_H.getAddress(), 2);  // Read again to trigger
-        therm = ((float) (short) ((rawData[0] << 8) | rawData[1]));  // Turn the MSB and LSB into a 16-bit value
+//        mpu9250.read(Registers.TEMP_OUT_H.getAddress(), 2);  // Read again to trigger
+//        therm = ((float) (short) ((rawData[0] << 8) | rawData[1]));  // Turn the MSB and LSB into a 16-bit value
     }
 
 
     public short[] read16BitRegisters(ProtocolInterface device, int address, int regCount) {
         byte rawData[] = null;
-        try {
-            rawData = device.read(address, regCount * 2);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        while (rawData == null) {
+            try {
+                rawData = device.read(address, regCount * 2);
+            } catch (IOException ignored) {
+                System.out.println(++counter);
+            }
         }
 //        if(address == 59) {
 //            System.out.println(rawData[0]);

@@ -2,9 +2,9 @@ package AHRS;
 
 public class Quaternion {
 
-    private float wp, xp, yp, zp;
+    private double wp, xp, yp, zp;
 
-    public Quaternion(float wp, float xp, float yp, float zp) {
+    public Quaternion(double wp, double xp, double yp, double zp) {
         this.wp = wp;
         this.xp = xp;
         this.yp = yp;
@@ -22,7 +22,7 @@ public class Quaternion {
         zp = q.getZp();
     }
 
-    public Quaternion(float[] data) {
+    public Quaternion(double[] data) {
         this.wp = data[0];
         this.xp = data[0];
         this.yp = data[0];
@@ -30,9 +30,9 @@ public class Quaternion {
     }
 
     public void normalize() {
-        float norm;
+        double norm;
         // Normalise accelerometer measurement
-        norm = (float) Math.sqrt(wp * wp + xp * xp + yp * yp + zp * zp);
+        norm = (double) Math.sqrt(wp * wp + xp * xp + yp * yp + zp * zp);
         if (norm == 0.0f) {
             throw new ArithmeticException(); // handle NaN
         }
@@ -43,7 +43,7 @@ public class Quaternion {
         zp *= norm;
     }
 
-    public void setAll(float a, float b, float c, float d) {
+    public void setAll(double a, double b, double c, double d) {
         this.wp = a;
         this.xp = b;
         this.yp = c;
@@ -51,48 +51,48 @@ public class Quaternion {
     }
 
     public static Quaternion multiply(Quaternion q1, Quaternion q2) {
-        float yy = (q1.wp - q1.yp) * (q2.wp + q2.zp);
-        float zz = (q1.wp + q1.yp) * (q2.wp - q2.zp);
-        float ww = (q1.zp + q1.xp) * (q2.xp + q2.yp);
-        float xx = ww + yy + zz;
-        float qq = 0.5f * (xx + (q1.zp - q1.xp) * (q2.xp - q2.yp));
+        double yy = (q1.wp - q1.yp) * (q2.wp + q2.zp);
+        double zz = (q1.wp + q1.yp) * (q2.wp - q2.zp);
+        double ww = (q1.zp + q1.xp) * (q2.xp + q2.yp);
+        double xx = ww + yy + zz;
+        double qq = 0.5f * (xx + (q1.zp - q1.xp) * (q2.xp - q2.yp));
 
-        float w = qq - ww + (q1.zp - q1.yp) * (q2.yp - q2.zp);
-        float x = qq - xx + (q1.xp + q1.wp) * (q2.xp + q2.wp);
-        float y = qq - yy + (q1.wp - q1.xp) * (q2.yp + q2.zp);
-        float z = qq - zz + (q1.zp + q1.yp) * (q2.wp - q2.xp);
+        double w = qq - ww + (q1.zp - q1.yp) * (q2.yp - q2.zp);
+        double x = qq - xx + (q1.xp + q1.wp) * (q2.xp + q2.wp);
+        double y = qq - yy + (q1.wp - q1.xp) * (q2.yp + q2.zp);
+        double z = qq - zz + (q1.zp + q1.yp) * (q2.wp - q2.xp);
         return new Quaternion(w, x, y, z);
     }
 
-    public float getWp() {
+    public double getWp() {
         return wp;
     }
 
-    public void setWp(float wp) {
+    public void setWp(double wp) {
         this.wp = wp;
     }
 
-    public float getXp() {
+    public double getXp() {
         return xp;
     }
 
-    public void setXp(float xp) {
+    public void setXp(double xp) {
         this.xp = xp;
     }
 
-    public float getYp() {
+    public double getYp() {
         return yp;
     }
 
-    public void setYp(float yp) {
+    public void setYp(double yp) {
         this.yp = yp;
     }
 
-    public float getZp() {
+    public double getZp() {
         return zp;
     }
 
-    public void setZp(float zp) {
+    public void setZp(double zp) {
         this.zp = zp;
     }
 
