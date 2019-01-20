@@ -1,9 +1,9 @@
 package pendulum.stateMachine.Impl;
 
 import AHRS.Quaternion;
-import observer.EventType;
 import devices.sensors.dataTypes.CircularArrayRing;
 import observer.EventListener;
+import observer.EventType;
 import pendulum.display.ImgDisplay;
 import pendulum.stateMachine.PendulumStateMachine;
 import pendulum.storage.ImgListStorage;
@@ -12,34 +12,29 @@ import transmission.Protocol.CommandQueue;
 import transmission.Protocol.CommandType;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
 
 public class PendulumStateMachineImpl implements PendulumStateMachine, EventListener {
     private static Quaternion vertQ = new Quaternion((float) Math.sqrt(2) / 2, 0, (float) Math.sqrt(2) / 2, 0);
     private static int BUFFER_SIZE = 100;
     private static int MOVE_LIMIT_FLAG = 100;
     private MovementState state = MovementState.SLOW;
-    private List<ImgDisplay> imgDisplayList;
+    private ImgDisplay imgDisplay;
     private ImgListStorage imgStorage;
     private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(BUFFER_SIZE);
-    private CircularArrayRing<Double> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
+    private CircularArrayRing<DoubleTimeStampedValue> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
 
-    public PendulumStateMachineImpl(List<ImgDisplay> imgDisplayList, ImgListStorage imgStorage) {
-        this.imgDisplayList = imgDisplayList;
+    public PendulumStateMachineImpl(ImgDisplay imgDisplay, ImgListStorage imgStorage) {
+        this.imgDisplay = imgDisplay;
         this.imgStorage = imgStorage;
-        imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.current()));
+        imgDisplay.setImg(imgStorage.current());
     }
 
     @Override
     public void readNewSample(Quaternion q) throws IOException {
         addNewSample(q);
         Double line = Math.ceil(quaternionToLine(q));
-//        System.out.println(line);
-        lineValueBuffer.add(line);
-        if(checkTurn()) {
-            imgDisplayList.forEach(imgDisplay -> imgDisplay.setImg(imgStorage.next()));
-        }
+        lineValueBuffer.add(new DoubleTimeStampedValue(line));
+        imgDisplay.setImg(imgStorage.next());
         displayLine(line.intValue());
     }
 
@@ -55,14 +50,12 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
 
     @Override
     public void interpolateNewPosition() {
-        Double delta = lineValueBuffer.get(0) - lineValueBuffer.get(1);
-        lineValueBuffer.add(lineValueBuffer.get(0) + delta);
+        Double deltaTime = (double) (lineValueBuffer.get(0).getNanoTime() - lineValueBuffer.get(1).getNanoTime()) / DoubleTimeStampedValue.NANOS_PER_SEC;
+        lineValueBuffer.get(1);
     }
 
     protected void displayLine(int line) throws IOException {
-        for(ImgDisplay imgDisplay: imgDisplayList){
-            imgDisplay.displayLine(line);
-        }
+        imgDisplay.displayLine(line);
     }
 
     private void addNewSample(Quaternion q) {
@@ -78,9 +71,9 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         int moveTurnLimit = 7;
         if(lineValueBuffer.size() > windowSize) {
             int size = lineValueBuffer.size() - 1;
-            double start = lineValueBuffer.get(size - windowSize);
-            double middle = lineValueBuffer.get(size - windowSize / 2);
-            double end = lineValueBuffer.get(size);
+            double start = lineValueBuffer.get(size - windowSize).getValue();
+            double middle = lineValueBuffer.get(size - windowSize / 2).getValue();
+            double end = lineValueBuffer.get(size).getValue();
             if(Math.abs(start - end) < moveTurnLimit) {
                 state = MovementState.SLOW;
             }
@@ -115,14 +108,14 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     public void update(EventType type) {
         if(type.equals(EventType.STORAGE_UPDATED)) {
             imgStorage.loadData();
-            imgDisplayList.forEach(display -> display.setImg(imgStorage.current()));
+            imgDisplay.setImg(imgStorage.current());
         } else if (type.equals(EventType.MESSAGE_RECEIVE)) {
             Command command = CommandQueue.peek();
             if(command.getType().equals(CommandType.IMAGE)) {
                 command = CommandQueue.poll();
                 String name = command.getArgs().get("name");
                 imgStorage.chooseImgByName(name);
-                imgDisplayList.forEach(display -> display.setImg(imgStorage.current()));
+                imgDisplay.setImg(imgStorage.current());
             }
         }
     }

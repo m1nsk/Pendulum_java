@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 abstract class ImgDisplayImpl implements ImgDisplay {
+    private static byte[] START_FRAME = new byte[]{0, 0, 0, 0};
 
     private static SpiDevice spi = null;
     private List<byte[]> img = new ArrayList<>();
@@ -39,6 +40,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
     }
 
     private void writeLine(byte[] bytes) throws IOException {
+        spi.write(START_FRAME);
         if (bytes.length < 2048) {
             spi.write(bytes);
         } else {

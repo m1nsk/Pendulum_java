@@ -41,7 +41,7 @@ public class AHRS {
     }
 
     public void imuLoop() throws InterruptedException, IOException {
-        
+
         float dt;        // Timing data
 
         //----------------------- Calculate delta time ----------------------------
@@ -53,7 +53,6 @@ public class AHRS {
         }
         currenttime = System.nanoTime() / 1000;
         dt = (float) ((currenttime - previoustime) / 1000000.0);
-//        System.out.println(dt);
 
         //-------- Read raw measurements from the MPU and update AHRS --------------
         updateIMU(dt);

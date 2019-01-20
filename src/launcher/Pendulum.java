@@ -46,7 +46,7 @@ public class Pendulum implements Runnable {
 
             ImgDisplay imgDisplay = new ImgDefaultDisplayImpl(params.getSpiApa102Channel(), params.getSpiAPA102Speed());
 
-            PendulumStateMachine stateMachine = new PendulumStateMachineImpl(Collections.singletonList(imgDisplay), imgStorage);
+            PendulumStateMachine stateMachine = new PendulumStateMachineImpl(imgDisplay, imgStorage);
 
             eventManager.subscribe(EventType.STORAGE_UPDATED, (EventListener) stateMachine);
             eventManager.subscribe(EventType.MESSAGE_RECEIVE, (EventListener) stateMachine);
@@ -64,18 +64,12 @@ public class Pendulum implements Runnable {
             AHRS ahrs = new AHRS(mpu9250);
             ahrs.setGyroOffset();
 
-            long t1 = System.nanoTime();
-            int counter = 0;
-            while ((System.nanoTime() - t1) / 1000000000 <= 10) {
+            while (true) {
                 ahrs.imuLoop();
-                counter++;
-                if(counter++ % 3 == 0) {
-                    stateMachine.readNewSample(ahrs.getQ());
-                } else {
-                    stateMachine.interpolateNewPosition();
-                }
+                stateMachine.readNewSample(ahrs.getQ());
+                Thread.sleep(1000 / params.getDisplayFrequency());
             }
-            System.out.println(counter + " counter");
+//            System.out.println(counter + " counter");
         } catch (Exception e) {
                 throw new RuntimeException(e);
         }

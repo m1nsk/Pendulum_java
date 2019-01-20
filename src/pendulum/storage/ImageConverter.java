@@ -27,7 +27,7 @@ public class ImageConverter {
 
     public List<byte[]> convertImage(File file) throws IOException {
         List<byte[]> result = new ArrayList<>();
-
+        brightness = 0.5;
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
         for (int a = 0; a < polarYSize; a++) { //covert images to byteArray list
@@ -35,7 +35,7 @@ public class ImageConverter {
             for (int l = 0; l < ySize; l++) {
                 int rgb = polarConverter(a, l, bImg);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
-                if(brightness != 10.0) {
+                if(brightness != 1.0) {
                     bytes[1] = (byte)((int)bytes[1] * brightness);
                     bytes[2] = (byte)((int)bytes[2] * brightness);
                     bytes[3] = (byte)((int)bytes[3] * brightness);

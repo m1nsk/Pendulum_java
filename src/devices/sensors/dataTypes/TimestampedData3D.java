@@ -1,9 +1,5 @@
 package devices.sensors.dataTypes;
 
-/**
- * RPITank
- * Created by MAWood on 11/07/2016.
- */
 public class TimestampedData3D extends Data3D
 {
     public static final long NANOS_PER_SEC = 1000000000;
@@ -20,22 +16,17 @@ public class TimestampedData3D extends Data3D
         this(x, y, z, System.nanoTime());
     }
 
-    public TimestampedData3D(Data3D data)
-    {
-        this(data.getX(),data.getY(),data.getZ());
-    }
-
-    public TimestampedData3D(TimestampedData3D data)
-    {
-        super(data.getX(),data.getY(),data.getZ());
-        this.nanoTime = data.nanoTime;
-    }
-
     public String toString()
     {
         String format = "%+04.4f";
         return 	" t: " + String.format(format,(float)(nanoTime/(float)NANOS_PER_SEC)) +
                 " " + super.toString();
+    }
+
+    public static double getDeltaTime(TimestampedData3D sampleT, TimestampedData3D sampleTm1) {
+        if(sampleT == null)
+            return (double) (sampleTm1.nanoTime / (double)TimestampedData3D.NANOS_PER_SEC);
+        return (double) (sampleT.nanoTime - sampleTm1.nanoTime)/(double) TimestampedData3D.NANOS_PER_SEC; // time difference between samples in seconds
     }
 
     public static TimestampedData3D integrate(TimestampedData3D sampleT, TimestampedData3D sampleTm1 )

@@ -1,5 +1,10 @@
 package AHRS;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter @Getter @ToString
 public class Quaternion {
 
     private double wp, xp, yp, zp;
@@ -62,47 +67,5 @@ public class Quaternion {
         double y = qq - yy + (q1.wp - q1.xp) * (q2.yp + q2.zp);
         double z = qq - zz + (q1.zp + q1.yp) * (q2.wp - q2.xp);
         return new Quaternion(w, x, y, z);
-    }
-
-    public double getWp() {
-        return wp;
-    }
-
-    public void setWp(double wp) {
-        this.wp = wp;
-    }
-
-    public double getXp() {
-        return xp;
-    }
-
-    public void setXp(double xp) {
-        this.xp = xp;
-    }
-
-    public double getYp() {
-        return yp;
-    }
-
-    public void setYp(double yp) {
-        this.yp = yp;
-    }
-
-    public double getZp() {
-        return zp;
-    }
-
-    public void setZp(double zp) {
-        this.zp = zp;
-    }
-
-    @Override
-    public String toString() {
-        return "Quaternion{" +
-                "wp=" + wp +
-                ", xp=" + xp +
-                ", yp=" + yp +
-                ", zp=" + zp +
-                '}';
     }
 }
