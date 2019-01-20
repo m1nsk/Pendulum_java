@@ -4,6 +4,7 @@ import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
 import com.pi4j.io.spi.SpiFactory;
 import com.pi4j.io.spi.SpiMode;
+import pendulum.display.Apa102Output;
 import pendulum.display.ImgDisplay;
 
 import java.io.IOException;
@@ -17,9 +18,12 @@ abstract class ImgDisplayImpl implements ImgDisplay {
 
     private static SpiDevice spi = null;
     private List<byte[]> img = new ArrayList<>();
+    private Apa102Output apa102Output;
 
     public ImgDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed) throws IOException{
-        spi = SpiFactory.getInstance(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
+        Apa102Output.initSpi(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
+        apa102Output = new Apa102Output(144);
+//        spi = SpiFactory.getInstance(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
     }
 
     @Override
@@ -36,7 +40,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
     abstract int offsetLineNum(int lineNum);
 
     protected void writeStrip(int lineNum) throws IOException {
-        writeLine(img.get(lineNum));
+        apa102Output.writeStrip(img.get(lineNum));
     }
 
     private void writeLine(byte[] bytes) throws IOException {
