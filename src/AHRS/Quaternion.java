@@ -2,9 +2,8 @@ package AHRS;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-@Setter @Getter @ToString
+@Getter @Setter
 public class Quaternion {
 
     private double wp, xp, yp, zp;
@@ -35,9 +34,9 @@ public class Quaternion {
     }
 
     public void normalize() {
-        double norm;
+        float norm;
         // Normalise accelerometer measurement
-        norm = (double) Math.sqrt(wp * wp + xp * xp + yp * yp + zp * zp);
+        norm = (float) Math.sqrt(wp * wp + xp * xp + yp * yp + zp * zp);
         if (norm == 0.0f) {
             throw new ArithmeticException(); // handle NaN
         }
@@ -68,4 +67,24 @@ public class Quaternion {
         double z = qq - zz + (q1.zp + q1.yp) * (q2.wp - q2.xp);
         return new Quaternion(w, x, y, z);
     }
+
+    public static double scalar(Quaternion q1, Quaternion q2) {
+        return q1.getXp() * q2.getXp() + q1.getYp() * q2.getYp() + q1.getZp() * q2.getZp() + q1.getWp() * q2.getWp();
+    }
+
+    public static double getYProjectionDegree(Quaternion q) {
+        double v = q.wp * Math.sqrt((q.wp * q.wp + q.xp * q.xp + q.yp * q.yp + q.zp * q.zp) / (q.wp * q.wp + q.yp * q.yp));
+        return Math.toDegrees(Math.acos(v) * 2);
+    }
+
+    @Override
+    public String toString() {
+        return "Quaternion{" +
+                "wp=" + wp +
+                ", xp=" + xp +
+                ", yp=" + yp +
+                ", zp=" + zp +
+                '}';
+    }
 }
+

@@ -14,7 +14,7 @@ import transmission.Protocol.CommandType;
 import java.io.IOException;
 
 public class PendulumStateMachineImpl implements PendulumStateMachine, EventListener {
-    private static Quaternion vertQ = new Quaternion((float) Math.sqrt(2) / 2, 0, (float) Math.sqrt(2) / 2, 0);
+    private static Quaternion rotationQ = new Quaternion(Math.sqrt(2) / 2, - Math.sqrt(2) / 2, 0 ,0);
     private static int BUFFER_SIZE = 100;
     private static int MOVE_LIMIT_FLAG = 100;
     private MovementState state = MovementState.SLOW;
@@ -33,8 +33,8 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     public void readNewSample(Quaternion q) throws IOException {
         addNewSample(q);
         Double line = Math.ceil(quaternionToLine(q));
+        System.out.println(line);
         lineValueBuffer.add(new DoubleTimeStampedValue(line));
-        imgDisplay.setImg(imgStorage.next());
         displayLine(line.intValue());
     }
 
@@ -63,7 +63,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     }
 
     protected double quaternionToLine(Quaternion q) {
-        return 90 + Quaternion.multiply(q, vertQ).getXp() * 2 * 90 / Math.sqrt(2);
+        return Quaternion.getYProjectionDegree(Quaternion.multiply(q, rotationQ));
     }
 
     private boolean checkTurn() {
@@ -122,5 +122,21 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
 
     enum MovementState {
         RIGHT, LEFT, SLOW
+    }
+
+    public static void main(String[] args) {
+        Quaternion q = new Quaternion(0.707, -0.707, 0, 0);
+        Quaternion qs = new Quaternion(0.707, 0.707, 0, 0);
+        Quaternion qm = new Quaternion(0.5, 0.5, -0.5, 0.5);
+        Quaternion qe = new Quaternion(0, 0, -0.707, 0.707);
+        Quaternion qe1 = new Quaternion(0.612, 0.34, 0.669, 0.251);
+        Quaternion qe2 = new Quaternion(0.5, 0.5, 0.5, 0.5);
+        Quaternion qe3 = new Quaternion(0.707, 0.0, 0.707, 0);
+//        System.out.println(Quaternion.getYProjectionDegree(qs));
+//        System.out.println(Quaternion.getYProjectionDegree(qm));
+//        System.out.println(Quaternion.getYProjectionDegree(qe));
+//        System.out.println(Quaternion.getYProjectionDegree(qe1));
+//        System.out.println(Quaternion.getYProjectionDegree(qe2));
+        System.out.println(Quaternion.getYProjectionDegree(qe3));
     }
 }

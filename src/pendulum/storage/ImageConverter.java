@@ -36,9 +36,9 @@ public class ImageConverter {
                 int rgb = polarConverter(a, l, bImg);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
                 if(brightness != 1.0) {
-                    bytes[1] = (byte)((int)bytes[1] * brightness);
-                    bytes[2] = (byte)((int)bytes[2] * brightness);
-                    bytes[3] = (byte)((int)bytes[3] * brightness);
+                    bytes[1] = (byte)((bytes[1] + 255) % 255 * brightness);
+                    bytes[2] = (byte)((bytes[2] + 255) % 255 * brightness);
+                    bytes[3] = (byte)((bytes[3] + 255) % 255 * brightness);
                 }
                 System.arraycopy(bytes, 0, line, l * 4, 4);
             }
@@ -48,7 +48,7 @@ public class ImageConverter {
     }
 
     private BufferedImage resizeImg(BufferedImage bImg) {
-        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);   //scale images
+        Image tmp = bImg.getScaledInstance(xSize, ySize, Image.SCALE_FAST);   //scale images
         bImg = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bImg.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);

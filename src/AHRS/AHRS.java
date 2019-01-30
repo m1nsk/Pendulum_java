@@ -86,6 +86,7 @@ public class AHRS {
         az = acc.getZ();
 
         TimestampedData3D gyr = sensor.getGyro();
+
         gx = gyr.getX();
         gy = gyr.getY();
         gz = gyr.getZ();

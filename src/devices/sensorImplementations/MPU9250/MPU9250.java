@@ -13,7 +13,7 @@ import java.io.IOException;
 public class MPU9250 extends NineDOF {
 
     private static final AccScale accScale = AccScale.AFS_16G;
-    private static final GyrScale gyrScale = GyrScale.GFS_1000DPS;
+    private static final GyrScale gyrScale = GyrScale.GFS_2000DPS;
 
     static final double G_SI = 9.80665;
     static final double PI = 3.14159;

@@ -21,9 +21,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
     private Apa102Output apa102Output;
 
     public ImgDisplayImpl(SpiChannel spiChannel, int spiAPA102Speed) throws IOException{
-        Apa102Output.initSpi(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
-        apa102Output = new Apa102Output(144);
-//        spi = SpiFactory.getInstance(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
+        spi = SpiFactory.getInstance(spiChannel, spiAPA102Speed, SpiMode.MODE_0);
     }
 
     @Override
@@ -40,7 +38,7 @@ abstract class ImgDisplayImpl implements ImgDisplay {
     abstract int offsetLineNum(int lineNum);
 
     protected void writeStrip(int lineNum) throws IOException {
-        apa102Output.writeStrip(img.get(lineNum));
+        writeLine(img.get(lineNum));
     }
 
     private void writeLine(byte[] bytes) throws IOException {

@@ -1,15 +1,15 @@
 package launcher;
 
 import AHRS.AHRS;
-import observer.EventListener;
-import observer.EventManager;
-import observer.EventType;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CFactory;
 import devices.Protocol.ProtocolInterface;
 import devices.Protocol.i2c.Pi4jI2CDevice;
 import devices.sensorImplementations.MPU9250.MPU9250;
 import devices.sensors.NineDOF;
+import observer.EventListener;
+import observer.EventManager;
+import observer.EventType;
 import pendulum.PendulumParams;
 import pendulum.StorageFileGetter;
 import pendulum.display.ImgDisplay;
@@ -21,9 +21,6 @@ import pendulum.storage.Impl.ImgListStorageImpl;
 import transmission.device.Device;
 
 import java.io.File;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 
 
 public class Pendulum implements Runnable {
@@ -64,10 +61,14 @@ public class Pendulum implements Runnable {
             AHRS ahrs = new AHRS(mpu9250);
             ahrs.setGyroOffset();
 
+            long start = System.nanoTime();
             while (true) {
-                ahrs.imuLoop();
-                stateMachine.readNewSample(ahrs.getQ());
-                Thread.sleep(1000 / params.getDisplayFrequency());
+                if(System.nanoTime() - start >= 1_000_000_000 / ( params.getPolarYSize() / 2)) {
+//                    System.out.println(System.nanoTime() - start + " :nano");
+                    ahrs.imuLoop();
+                    start = System.nanoTime();
+                    stateMachine.readNewSample(ahrs.getQ());
+                }
             }
 //            System.out.println(counter + " counter");
         } catch (Exception e) {

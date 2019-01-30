@@ -16,7 +16,7 @@ import java.util.Properties;
 @Setter
 public class PendulumParams {
     private static volatile PendulumParams instance;
-    private Integer polarYSize = 360;
+    private Integer polarYSize = 180;
     private Integer spiAPA102Speed = 1_000_000;
     private Integer spiSensorSpeed = 1_000_000;
     private SpiChannel spiSensorChannel = SpiChannel.CS0;
