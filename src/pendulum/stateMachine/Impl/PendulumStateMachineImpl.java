@@ -1,7 +1,9 @@
 package pendulum.stateMachine.Impl;
 
-import AHRS.Quaternion;
 import devices.sensors.dataTypes.CircularArrayRing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import observer.EventListener;
 import observer.EventType;
 import pendulum.display.ImgDisplay;
@@ -14,13 +16,10 @@ import transmission.Protocol.CommandType;
 import java.io.IOException;
 
 public class PendulumStateMachineImpl implements PendulumStateMachine, EventListener {
-    private static Quaternion rotationQ = new Quaternion(Math.sqrt(2) / 2, - Math.sqrt(2) / 2, 0 ,0);
-    private static int BUFFER_SIZE = 100;
     private static int MOVE_LIMIT_FLAG = 100;
     private MovementState state = MovementState.SLOW;
     private ImgDisplay imgDisplay;
     private ImgListStorage imgStorage;
-    private CircularArrayRing<Quaternion> sampleBuffer = new CircularArrayRing<>(BUFFER_SIZE);
     private CircularArrayRing<DoubleTimeStampedValue> lineValueBuffer = new CircularArrayRing<>(MOVE_LIMIT_FLAG);
 
     public PendulumStateMachineImpl(ImgDisplay imgDisplay, ImgListStorage imgStorage) {
@@ -30,12 +29,10 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     }
 
     @Override
-    public void readNewSample(Quaternion q) throws IOException {
-        addNewSample(q);
-        Double line = Math.ceil(quaternionToLine(q));
-        System.out.println(line);
-        lineValueBuffer.add(new DoubleTimeStampedValue(line));
-        displayLine(line.intValue());
+    public void readNewSample(Double degree) throws IOException {
+//        System.out.println(line);
+        lineValueBuffer.add(new DoubleTimeStampedValue(degree));
+        displayLine(degree);
     }
 
     @Override
@@ -49,21 +46,17 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     }
 
     @Override
-    public void interpolateNewPosition() {
-        Double deltaTime = (double) (lineValueBuffer.get(0).getNanoTime() - lineValueBuffer.get(1).getNanoTime()) / DoubleTimeStampedValue.NANOS_PER_SEC;
-        lineValueBuffer.get(1);
+    public void extrapolate() throws IOException {
+        long now  = System.nanoTime();
+        DoubleTimeStampedValue prevData = lineValueBuffer.get(0);
+        DoubleTimeStampedValue beforePrevData = lineValueBuffer.get(1);
+        double speed = (prevData.value - beforePrevData.value) / (prevData.nanoTime - beforePrevData.nanoTime);
+        double extrapolatedDegree = prevData.value + speed * (now - prevData.nanoTime);
+        displayLine(extrapolatedDegree);
     }
 
-    protected void displayLine(int line) throws IOException {
+    protected void displayLine(Double line) throws IOException {
         imgDisplay.displayLine(line);
-    }
-
-    private void addNewSample(Quaternion q) {
-        sampleBuffer.add(q);
-    }
-
-    protected double quaternionToLine(Quaternion q) {
-        return Quaternion.getYProjectionDegree(Quaternion.multiply(q, rotationQ));
     }
 
     private boolean checkTurn() {
@@ -124,19 +117,18 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         RIGHT, LEFT, SLOW
     }
 
-    public static void main(String[] args) {
-        Quaternion q = new Quaternion(0.707, -0.707, 0, 0);
-        Quaternion qs = new Quaternion(0.707, 0.707, 0, 0);
-        Quaternion qm = new Quaternion(0.5, 0.5, -0.5, 0.5);
-        Quaternion qe = new Quaternion(0, 0, -0.707, 0.707);
-        Quaternion qe1 = new Quaternion(0.612, 0.34, 0.669, 0.251);
-        Quaternion qe2 = new Quaternion(0.5, 0.5, 0.5, 0.5);
-        Quaternion qe3 = new Quaternion(0.707, 0.0, 0.707, 0);
-//        System.out.println(Quaternion.getYProjectionDegree(qs));
-//        System.out.println(Quaternion.getYProjectionDegree(qm));
-//        System.out.println(Quaternion.getYProjectionDegree(qe));
-//        System.out.println(Quaternion.getYProjectionDegree(qe1));
-//        System.out.println(Quaternion.getYProjectionDegree(qe2));
-        System.out.println(Quaternion.getYProjectionDegree(qe3));
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    public class DoubleTimeStampedValue {
+
+        public DoubleTimeStampedValue(double value) {
+            this.value = value;
+            this.nanoTime = System.nanoTime();
+        }
+
+        public static final long NANOS_PER_SEC = 1000000000;
+        private double value;
+        private long nanoTime;
     }
 }

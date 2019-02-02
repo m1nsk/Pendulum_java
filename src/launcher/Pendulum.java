@@ -1,6 +1,7 @@
 package launcher;
 
-import AHRS.AHRS;
+import AHRS.Ahrs;
+import AHRS.QuaternionUtils;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CFactory;
 import devices.Protocol.ProtocolInterface;
@@ -21,6 +22,7 @@ import pendulum.storage.Impl.ImgListStorageImpl;
 import transmission.device.Device;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 
 public class Pendulum implements Runnable {
@@ -58,21 +60,25 @@ public class Pendulum implements Runnable {
             NineDOF mpu9250 = new MPU9250(
                     protocolInterfaceI2C,
                     params.getDisplayFrequency());
-            AHRS ahrs = new AHRS(mpu9250);
+            Ahrs ahrs = new Ahrs(mpu9250);
             ahrs.setGyroOffset();
 
             long start = System.nanoTime();
             while (true) {
-                if(System.nanoTime() - start >= 1_000_000_000 / ( params.getPolarYSize() / 2)) {
-//                    System.out.println(System.nanoTime() - start + " :nano");
+                if(checkTime(params, start, 2)) {
                     ahrs.imuLoop();
                     start = System.nanoTime();
-                    stateMachine.readNewSample(ahrs.getQ());
+                    stateMachine.readNewSample(QuaternionUtils.quaternionToDegree(ahrs.getQ()));
+                } else if(checkTime(params, start, 1)) {
+                    stateMachine.extrapolate();
                 }
             }
-//            System.out.println(counter + " counter");
         } catch (Exception e) {
                 throw new RuntimeException(e);
         }
+    }
+
+    private boolean checkTime(PendulumParams params, long start, int divider) {
+        return System.nanoTime() - start >= TimeUnit.SECONDS.toNanos(1) / ( params.getPolarYSize() / divider);
     }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
  *
  * @author minsk
  */
-public class AHRS {
+public class Ahrs {
 
     Mpu9250Interface sensor = null;
     private float maxdt;
@@ -30,7 +30,7 @@ public class AHRS {
     private float integralFBy;
     private float integralFBz;
 
-    public AHRS(Mpu9250Interface sensor) {
+    public Ahrs(Mpu9250Interface sensor) {
         this.sensor = sensor;
         q0 = 1;
         q1 = 0;
@@ -54,7 +54,7 @@ public class AHRS {
         currenttime = System.nanoTime() / 1000;
         dt = (float) ((currenttime - previoustime) / 1000000.0);
 
-        //-------- Read raw measurements from the MPU and update AHRS --------------
+        //-------- Read raw measurements from the MPU and update Ahrs --------------
         updateIMU(dt);
 
         if (!isFirst) {

@@ -4,10 +4,6 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- * RPITank
- * Created by MAWood on 11/07/2016.
- */
 public class CircularArrayRing<T> extends AbstractCollection<T>
 {
 

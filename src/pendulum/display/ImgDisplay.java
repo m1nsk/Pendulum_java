@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface ImgDisplay {
 
-    void displayLine(int lineNum) throws IOException;
+    void displayLine(Double lineNum) throws IOException;
 
     void setImg(List<byte[]> img);
 

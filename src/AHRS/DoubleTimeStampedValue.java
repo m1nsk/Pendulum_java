@@ -1,4 +1,4 @@
-package pendulum.stateMachine.Impl;
+package AHRS;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
