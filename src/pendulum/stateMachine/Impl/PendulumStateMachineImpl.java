@@ -30,7 +30,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
 
     @Override
     public void readNewSample(Double degree) throws IOException {
-//        System.out.println(line);
+        System.out.println(degree);
         lineValueBuffer.add(new DoubleTimeStampedValue(degree));
         displayLine(degree);
     }
@@ -48,11 +48,14 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
     @Override
     public void extrapolate() throws IOException {
         long now  = System.nanoTime();
-        DoubleTimeStampedValue prevData = lineValueBuffer.get(0);
-        DoubleTimeStampedValue beforePrevData = lineValueBuffer.get(1);
-        double speed = (prevData.value - beforePrevData.value) / (prevData.nanoTime - beforePrevData.nanoTime);
-        double extrapolatedDegree = prevData.value + speed * (now - prevData.nanoTime);
-        displayLine(extrapolatedDegree);
+        if(lineValueBuffer.size() > 1) {
+            DoubleTimeStampedValue prevData = lineValueBuffer.get(0);
+            DoubleTimeStampedValue beforePrevData = lineValueBuffer.get(1);
+            double speed = (prevData.value - beforePrevData.value) / (prevData.nanoTime - beforePrevData.nanoTime);
+            double extrapolatedDegree = prevData.value + speed * (now - prevData.nanoTime);
+            System.out.println(extrapolatedDegree + " ex");
+            displayLine(extrapolatedDegree);
+        }
     }
 
     protected void displayLine(Double line) throws IOException {

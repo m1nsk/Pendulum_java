@@ -64,13 +64,17 @@ public class Pendulum implements Runnable {
             ahrs.setGyroOffset();
 
             long start = System.nanoTime();
+            int counter = 0;
             while (true) {
-                if(checkTime(params, start, 2)) {
-                    ahrs.imuLoop();
-                    start = System.nanoTime();
-                    stateMachine.readNewSample(QuaternionUtils.quaternionToDegree(ahrs.getQ()));
-                } else if(checkTime(params, start, 1)) {
-                    stateMachine.extrapolate();
+                if(checkTime(params, start)) {
+                    if (counter++ % 2 == 0) {
+                        ahrs.imuLoop();
+                        stateMachine.readNewSample(QuaternionUtils.quaternionToDegree(ahrs.getQ()));
+                        start = System.nanoTime();
+                    } else {
+                        stateMachine.extrapolate();
+                        start = System.nanoTime();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -78,7 +82,8 @@ public class Pendulum implements Runnable {
         }
     }
 
-    private boolean checkTime(PendulumParams params, long start, int divider) {
-        return System.nanoTime() - start >= TimeUnit.SECONDS.toNanos(1) / ( params.getPolarYSize() / divider);
+    private boolean checkTime(PendulumParams params, long start) {
+        long delta = TimeUnit.SECONDS.toNanos(1) / params.getPolarYSize();
+        return System.nanoTime() - start >= delta;
     }
 }

@@ -24,6 +24,9 @@ abstract class ImgDisplayImpl implements ImgDisplay {
 
     @Override
     public void displayLine(Double degree) throws IOException {
+        if(img == null || img.isEmpty()) {
+            return;
+        }
         int lineNum = new Double(degree * img.size() / 180).intValue();
         if(lineNum < 0)
             lineNum = Math.abs(lineNum);
