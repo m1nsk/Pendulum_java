@@ -30,8 +30,8 @@ abstract class ImgDisplayImpl implements ImgDisplay {
         int lineNum = new Double(degree * img.size() / 180).intValue();
         if(lineNum < 0)
             lineNum = Math.abs(lineNum);
-        if(lineNum >= img.size())
-            lineNum = Math.abs(img.size() - lineNum);
+        if(lineNum >= img.size() - 1)
+            lineNum = Math.abs(img.size() - 1    - lineNum % 360);
         writeStrip(offsetLineNum(lineNum));
     }
 

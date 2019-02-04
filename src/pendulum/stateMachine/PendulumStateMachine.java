@@ -6,5 +6,4 @@ public interface PendulumStateMachine {
     void readNewSample(Double degree) throws IOException;
     void nextImg();
     void previousImg();
-    void extrapolate() throws IOException;
 }

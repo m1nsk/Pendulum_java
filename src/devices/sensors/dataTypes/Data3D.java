@@ -1,9 +1,5 @@
 package devices.sensors.dataTypes;
 
-/**
- * RPITank - sensors
- * Created by matthew on 10/07/16.
- */
 public class Data3D{
 
     private float x;
@@ -17,9 +13,9 @@ public class Data3D{
     }
 
     public void normalize(){
-		float norm;
+		double norm;
 		// Normalise measurements
-		norm = (float)Math.sqrt(x*x + y*y + z*z);
+		norm = getModule();
 		if (norm == 0.0f)
 			throw new ArithmeticException(); // handle NaN
 		norm = 1f / norm;
@@ -27,6 +23,10 @@ public class Data3D{
 		y *= norm;
 		z *= norm;
 	}
+
+	public Double getModule() {
+        return Math.sqrt(x*x + y*y + z*z);
+    }
 
     public float getZ() {
         return z;

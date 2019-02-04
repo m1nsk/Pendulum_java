@@ -30,15 +30,18 @@ public class ImageConverter {
         brightness = 0.5;
         BufferedImage bImg = ImageIO.read(file);    //read img from file
         bImg = resizeImg(bImg);
+        byte swap;
         for (int a = 0; a < polarYSize; a++) { //covert images to byteArray list
             byte[] line = new byte[ySize * 4];
             for (int l = 0; l < ySize; l++) {
+//                for (int l = ySize - 1; l >= 0; l--) {
                 int rgb = polarConverter(a, l, bImg);
                 byte[] bytes = ByteBuffer.allocate(4).putInt(rgb).array();
                 if(brightness != 1.0) {
-                    bytes[1] = (byte)((bytes[1] + 255) % 255 * brightness);
+                    swap = bytes[1];
+                    bytes[1] = (byte)((bytes[3] + 255) % 255 * brightness);
                     bytes[2] = (byte)((bytes[2] + 255) % 255 * brightness);
-                    bytes[3] = (byte)((bytes[3] + 255) % 255 * brightness);
+                    bytes[3] = (byte)((swap + 255) % 255 * brightness);
                 }
                 System.arraycopy(bytes, 0, line, l * 4, 4);
             }

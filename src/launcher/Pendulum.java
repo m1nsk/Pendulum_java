@@ -1,6 +1,7 @@
 package launcher;
 
 import AHRS.Ahrs;
+import AHRS.MotionProcessor;
 import AHRS.QuaternionUtils;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CFactory;
@@ -29,6 +30,7 @@ public class Pendulum implements Runnable {
     private static EventManager eventManager;
     private static Device device = Device.getInstance();
     private static File storage;
+    private static MotionProcessor motionProcessor;
 
     public Pendulum(EventManager eventManager) {
         Pendulum.eventManager = eventManager;
@@ -50,29 +52,19 @@ public class Pendulum implements Runnable {
             eventManager.subscribe(EventType.STORAGE_UPDATED, (EventListener) stateMachine);
             eventManager.subscribe(EventType.MESSAGE_RECEIVE, (EventListener) stateMachine);
 
-            I2CBus bus = I2CFactory.getInstance(params.getI2cBus());
-            ProtocolInterface protocolInterfaceI2C = new Pi4jI2CDevice(bus.getDevice(0x68));
-//            ProtocolInterface protocolInterfaceSPI = new Pi4jSPIDevice(SpiFactory.getInstance(
-//                    params.getSpiSensorChannel(),
-//                    params.getSpiAPA102Speed(),
-//                    SpiMode.MODE_0));
-
-            NineDOF mpu9250 = new MPU9250(
-                    protocolInterfaceI2C,
-                    params.getDisplayFrequency());
-            Ahrs ahrs = new Ahrs(mpu9250);
-            ahrs.setGyroOffset();
+            motionProcessor = new MotionProcessor();
+            motionProcessor.init();
 
             long start = System.nanoTime();
             int counter = 0;
             while (true) {
                 if(checkTime(params, start)) {
-                    if (counter++ % 2 == 0) {
-                        ahrs.imuLoop();
-                        stateMachine.readNewSample(QuaternionUtils.quaternionToDegree(ahrs.getQ()));
+                    if (++counter % 2 == 0) {
+                        motionProcessor.imuLoop();
+                        stateMachine.readNewSample(motionProcessor.getSample());
                         start = System.nanoTime();
                     } else {
-                        stateMachine.extrapolate();
+                        stateMachine.readNewSample(motionProcessor.extrapolate());
                         start = System.nanoTime();
                     }
                 }
