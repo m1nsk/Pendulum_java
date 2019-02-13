@@ -5,9 +5,9 @@ import observer.EventType;
 import pendulum.display.ImgDisplay;
 import pendulum.stateMachine.PendulumStateMachine;
 import pendulum.storage.ImgListStorage;
-import transmission.Protocol.Command;
-import transmission.Protocol.CommandQueue;
-import transmission.Protocol.CommandType;
+import observer.Command;
+import observer.CommandQueue;
+import observer.CommandType;
 
 import java.io.IOException;
 
@@ -49,7 +49,6 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
         } else if (type.equals(EventType.MESSAGE_RECEIVE)) {
             Command command = CommandQueue.peek();
             if(command.getType().equals(CommandType.IMAGE)) {
-                command = CommandQueue.poll();
                 String name = command.getArgs().get("name");
                 imgStorage.chooseImgByName(name);
                 imgDisplay.setImg(imgStorage.current());

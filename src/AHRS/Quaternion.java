@@ -74,7 +74,7 @@ public class Quaternion {
 
     public static double getYProjectionDegree(Quaternion q) {
         double v = q.wp * Math.sqrt((q.wp * q.wp + q.xp * q.xp + q.yp * q.yp + q.zp * q.zp) / (q.wp * q.wp + q.yp * q.yp));
-        return Math.toDegrees(Math.acos(v) * 2);
+        return Math.toDegrees(Math.acos(v) * 2) - 90;
     }
 
     @Override

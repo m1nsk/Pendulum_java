@@ -1,4 +1,4 @@
-package pendulum.Loader;
+package pendulum.loader;
 
 import java.io.File;
 import java.util.Arrays;

@@ -1,5 +1,7 @@
 package bluetooth;
 
+import observer.Command;
+import observer.CommandQueue;
 import observer.EventManager;
 import observer.EventType;
 import pendulum.StorageFileGetter;

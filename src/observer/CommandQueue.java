@@ -1,8 +1,11 @@
-package transmission.Protocol;
+package observer;
+
+import lombok.ToString;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@ToString
 public class CommandQueue {
     private static Queue<Command> commands = new LinkedBlockingDeque<>();
 

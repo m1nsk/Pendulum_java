@@ -1,12 +1,12 @@
-package UsbReader;
+package usbReader;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import pendulum.Loader.HDDLoader;
-import pendulum.Loader.ImageUtils;
 import pendulum.PendulumParams;
+import pendulum.loader.HDDLoader;
+import pendulum.loader.ImageUtils;
 
 import java.io.*;
 import java.util.*;

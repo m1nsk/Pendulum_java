@@ -1,4 +1,4 @@
-package pendulum.Loader;
+package pendulum.loader;
 
 import pendulum.PendulumParams;
 import pendulum.storage.ImgListStorage;

@@ -1,5 +1,6 @@
 package bluetooth;
 
+import lombok.extern.slf4j.Slf4j;
 import observer.EventManager;
 
 import javax.bluetooth.BluetoothStateException;
@@ -11,13 +12,11 @@ import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 import java.io.IOException;
 
+@Slf4j(topic = "WAIT THREAD")
 public class WaitThread implements Runnable{
 
 	private static EventManager eventManager;
 
-	/**
-	 * Constructor
-	 */
 	public WaitThread(EventManager eventManager) {
 		WaitThread.eventManager = eventManager;
 	}
@@ -41,15 +40,16 @@ public class WaitThread implements Runnable{
 			local.setDiscoverable(DiscoveryAgent.GIAC);
 			
 			UUID uuid = new UUID("04c6093b00001000800000805f9b34fb", false);
-			System.out.println(uuid.toString());
+			log.info(uuid.toString());
 			
             String url = "btspp://localhost:" + uuid.toString() + ";name=RemoteBluetooth";
             notifier = (StreamConnectionNotifier)Connector.open(url);
         } catch (BluetoothStateException e) {
-        	System.out.println("Bluetooth is not turned on.");
+        	log.error("Bluetooth is not turned on.");
 			e.printStackTrace();
 			return;
 		} catch (IOException e) {
+			log.error(e.getMessage());
 			e.printStackTrace();
 			return;
 		}
@@ -57,13 +57,12 @@ public class WaitThread implements Runnable{
 		// waiting for connection
 		while(true) {
 			try {
-				System.out.println("waiting for connection...");
+				log.info("waiting for connection...");
 	            connection = notifier.acceptAndOpen();
-	            
 	            Thread processThread = new Thread(new ProcessConnectionThread(connection, eventManager));
 	            processThread.start();
-	            
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				e.printStackTrace();
 				return;
 			}

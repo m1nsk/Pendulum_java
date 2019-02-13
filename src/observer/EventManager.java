@@ -1,8 +1,11 @@
 package observer;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j(topic = "EVENT_MANAGER")
 public class EventManager {
     private Map<EventType, List<EventListener>> listeners = new ConcurrentHashMap<>();
 
@@ -26,5 +29,6 @@ public class EventManager {
         for (EventListener listener : users) {
             listener.update(eventType);
         }
+        log.info("command executed " + CommandQueue.poll().toString());
     }
 }

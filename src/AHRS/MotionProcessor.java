@@ -15,8 +15,11 @@ import pendulum.PendulumParams;
 import java.io.IOException;
 
 public class MotionProcessor {
-
-    private MovementState state = MovementState.SLOW;
+    private static final Quaternion rotationQ = new Quaternion(Math.sqrt(2) / 2, - Math.sqrt(2) / 2, 0 ,0);
+    private static final Quaternion vertQ = new Quaternion(0.707, 0, -0.707 ,0);
+    private static Quaternion closestDelta = new Quaternion(1, 0, 0, 0);
+    private static Quaternion closest = new Quaternion(1, 0, 0, 0);
+    private static Quaternion computed = new Quaternion(1, 0, 0, 0);
 
     private static int MOVE_LIMIT_FLAG = 100;
 
@@ -29,10 +32,6 @@ public class MotionProcessor {
     private Ahrs ahrs;
 
     private NineDOF mpu9250;
-
-    private enum MovementState {
-        RIGHT, LEFT, SLOW
-    }
 
     public void init() throws IOException, I2CFactory.UnsupportedBusNumberException, InterruptedException {
         params = PendulumParams.getInstance();
@@ -55,10 +54,10 @@ public class MotionProcessor {
     }
 
     public Double getSample() {
-        Double degree = QuaternionUtils.quaternionToDegree(ahrs.getQ());
-        degreeBuffer.add(new DoubleTimeStampedValue(degree));
-        speedBuffer.add(mpu9250.getGyro().getModule());
-        System.out.println(checkTurn());
+        Double degree = quaternionToDegree(ahrs.getQ());
+//        degreeBuffer.add(new DoubleTimeStampedValue(degree));
+//        speedBuffer.add(mpu9250.getGyro().getModule());
+//        checkTurn();
         return degree;
     }
 
@@ -70,7 +69,7 @@ public class MotionProcessor {
             double speed = (prevData.value - beforePrevData.value) / (prevData.nanoTime - beforePrevData.nanoTime);
             return prevData.value + speed * (now - prevData.nanoTime);
         }
-        return getSample();
+        return 0.0;
     }
 
     @Setter
@@ -88,41 +87,32 @@ public class MotionProcessor {
         private long nanoTime;
     }
 
+    private static boolean slow = false;
+    private static int counter = 0;
+
     private boolean checkTurn() {
-        int windowSize = 20;
-        int moveTurnLimit = 7;
-        if(speedBuffer.size() > windowSize) {
-            int size = speedBuffer.size() - 1;
-            double start = speedBuffer.get(size - windowSize);
-            double middle = speedBuffer.get(size - windowSize / 2);
-            double end = speedBuffer.get(size);
-            if(Math.abs(start - end) < moveTurnLimit) {
-                state = MovementState.SLOW;
-            }
-            if((start - middle) * (middle - end) > 0)
-                return false;
-            if(Math.abs(start - middle) < moveTurnLimit || Math.abs(middle - start) < moveTurnLimit)
-                return false;
-            if(Math.abs(Math.abs(start - middle) - Math.abs(middle - end)) < 100) {
-                switch (state) {
-                    case LEFT: {
-                        state = MovementState.RIGHT;
-                        speedBuffer.clear();
-                        return true;
-                    }
-                    case RIGHT: {
-                        state = MovementState.LEFT;
-                        speedBuffer.clear();
-                        return true;
-                    }
-                    case SLOW: {
-                        state = middle - end > 0 ? MovementState.LEFT : MovementState.RIGHT;
-                        speedBuffer.clear();
-                        return false;
-                    }
-                }
+         if (mpu9250.getGyro().getModule() < 0.7) {
+             if (!slow) {
+                 computed = closest;
+//                 System.out.println(computed);
+                 closestDelta = new Quaternion(1, 0, 0, 0);
+             }
+             slow = true;
+             return false;
+         }
+         slow = false;
+         return true;
+    }
+
+    public static Double quaternionToDegree(Quaternion q) {
+        Quaternion candidate = Quaternion.multiply(Quaternion.multiply(q, rotationQ), vertQ);
+        if(Math.abs(candidate.getWp()) < 0.2) {
+            if (Math.abs(candidate.getWp()) < Math.abs(closestDelta.getWp())) {
+                closestDelta = candidate;
+                closest = q;
+                System.out.println(candidate);
             }
         }
-        return false;
+        return Quaternion.getYProjectionDegree(Quaternion.multiply(q, rotationQ));
     }
 }

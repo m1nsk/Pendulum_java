@@ -1,4 +1,4 @@
-package transmission.Protocol;
+package observer;
 
 public enum CommandType {
     IMAGE("IMAGE"), PROPS("PROPS");

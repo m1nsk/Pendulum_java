@@ -1,19 +1,10 @@
-package launcher;
+package pendulum;
 
-import AHRS.Ahrs;
 import AHRS.MotionProcessor;
-import AHRS.QuaternionUtils;
-import com.pi4j.io.i2c.I2CBus;
-import com.pi4j.io.i2c.I2CFactory;
-import devices.Protocol.ProtocolInterface;
-import devices.Protocol.i2c.Pi4jI2CDevice;
-import devices.sensorImplementations.MPU9250.MPU9250;
-import devices.sensors.NineDOF;
+import lombok.extern.slf4j.Slf4j;
 import observer.EventListener;
 import observer.EventManager;
 import observer.EventType;
-import pendulum.PendulumParams;
-import pendulum.StorageFileGetter;
 import pendulum.display.ImgDisplay;
 import pendulum.display.impl.ImgDefaultDisplayImpl;
 import pendulum.stateMachine.Impl.PendulumStateMachineImpl;
@@ -25,7 +16,7 @@ import transmission.device.Device;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-
+@Slf4j(topic = "PENDULUM")
 public class Pendulum implements Runnable {
     private static EventManager eventManager;
     private static Device device = Device.getInstance();
@@ -33,6 +24,7 @@ public class Pendulum implements Runnable {
     private static MotionProcessor motionProcessor;
 
     public Pendulum(EventManager eventManager) {
+        log.info("started");
         Pendulum.eventManager = eventManager;
         storage = new StorageFileGetter().getStorage();
     }
@@ -70,7 +62,8 @@ public class Pendulum implements Runnable {
                 }
             }
         } catch (Exception e) {
-                throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
