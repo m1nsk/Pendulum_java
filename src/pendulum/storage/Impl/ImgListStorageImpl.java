@@ -50,6 +50,7 @@ public class ImgListStorageImpl implements ImgListStorage {
         imageConverter.setYSize(ledNum * 144);
         imageConverter.setXSize(ledNum * 2 * 144);
         imageConverter.setBrightness(device.getBrightness());
+        imageConverter.setOffset(device.getOffset());
         device.loadFromStorage();
         List<File> images = device.getImageList();
         imgListBuffer.clear();

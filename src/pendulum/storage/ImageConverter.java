@@ -35,6 +35,7 @@ public class ImageConverter {
             215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
     private int xSize;
     private int ySize;
+    private int offset;
     private int polarYSize;
     private double brightness;
 
@@ -76,15 +77,16 @@ public class ImageConverter {
     }
 
     private int polarConverter(int a, int l, BufferedImage bImg) {
+        l = l + offset;
         int DELTA_X = xSize / 2;
         int x = (int) (DELTA_X - l * Math.cos(Math.toRadians((float)a / polarYSize * 180)));
         if (x < 0 || x >= xSize) {
             return BLACK_PIXEL;
         } else {
-            int y = (int) (l * Math.sin(Math.toRadians((float)a / polarYSize * 180)));
+            int y = (int) (l * Math.sin(Math.toRadians((float)a / polarYSize * 180)) - offset);
             if (y < 0 || y >= ySize)
                 return BLACK_PIXEL;
-            return bImg.getRGB(x, y);
+            return bImg.getRGB(x, bImg.getHeight() - y - 1);
         }
     }
 }

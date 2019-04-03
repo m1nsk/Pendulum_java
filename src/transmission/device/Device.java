@@ -7,6 +7,7 @@ import java.util.*;
 public class Device implements ImageData, PropsData {
     private static final Integer LED_NUM = 5;
     private static final Integer BRIGHTNESS = 5;
+    private static final Integer OFFSET = 0;
     private static volatile Device instance;
     private Storage<List<File>> imageStorage;
     private Storage<Map<String, String>> propsStorage;
@@ -80,6 +81,16 @@ public class Device implements ImageData, PropsData {
     @Override
     public Integer getBrightness() {
         return Integer.parseInt(props.getOrDefault("brightness", BRIGHTNESS.toString()));
+    }
+
+    @Override
+    public Integer getOffset() {
+        return Integer.parseInt(props.getOrDefault("offset", OFFSET.toString()));
+    }
+
+    @Override
+    public void setOffset(Integer value) {
+        props.put("offset", value.toString());
     }
 
     @Override

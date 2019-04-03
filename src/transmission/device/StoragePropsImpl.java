@@ -30,8 +30,7 @@ public class StoragePropsImpl implements Storage<Map<String, String>> {
     private Map<String, String> loadProps() throws IOException {
         File propsFile = new File(imgDir + "/props.txt");
         if(propsFile.exists()) {
-            Map<String, String> props = objectMapper.readValue(propsFile, new TypeReference<Map<String, String>>() {
-            });
+            Map<String, String> props = objectMapper.readValue(propsFile, new TypeReference<Map<String, String>>() {});
             return props;
         }
         return new HashMap<>();

@@ -11,5 +11,9 @@ public interface PropsData {
 
     Integer getBrightness();
 
+    Integer getOffset();
+
+    void setOffset(Integer value);
+
     void saveToStorage() throws IOException;
 }
