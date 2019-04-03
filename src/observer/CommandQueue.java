@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 @ToString
 public class CommandQueue {
+
     private static Queue<Command> commands = new LinkedBlockingDeque<>();
 
     public static Command element() {

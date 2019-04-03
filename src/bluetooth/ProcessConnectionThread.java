@@ -10,6 +10,7 @@ import transmission.device.Device;
 import transmission.device.DeviceData;
 
 import javax.microedition.io.StreamConnection;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,14 +36,10 @@ public class ProcessConnectionThread implements Runnable{
 
     @Override
     public void run() {
-        try {
-
-            // prepare to receive data
-            InputStream inputStream = mConnection.openInputStream();
-            OutputStream outputStream = mConnection.openOutputStream();
-
-            System.out.println("waiting for input");
-
+        try (InputStream inputStream = mConnection.openInputStream();
+             OutputStream outputStream = mConnection.openOutputStream()) {
+            outputStream.write("Hello".getBytes());
+            outputStream.flush();
             boolean bytesFlag = false;
             byte[] bytes = new byte[2048];
             int counter = 0;
@@ -60,6 +57,10 @@ public class ProcessConnectionThread implements Runnable{
                 System.arraycopy(buffer, 0, bytes, counter, command);
                 counter += command;
             }
+
+            outputStream.write("Hello".getBytes());
+            outputStream.flush();
+
             if(bundleInfo.getType().equals(DataType.DATA)) {
                 DeviceData deviceData = deviceDataConverter.bytesToDeviceData(bytes);
                 saveDeviceDataToStorage(deviceData);

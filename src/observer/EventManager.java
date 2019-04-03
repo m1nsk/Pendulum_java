@@ -24,11 +24,10 @@ public class EventManager {
         users.remove(listener);
     }
 
-    public void notify(EventType eventType) {
+    public synchronized void notify(EventType eventType) {
         List<EventListener> users = listeners.get(eventType);
         for (EventListener listener : users) {
             listener.update(eventType);
         }
-        log.info("command executed " + CommandQueue.poll().toString());
     }
 }

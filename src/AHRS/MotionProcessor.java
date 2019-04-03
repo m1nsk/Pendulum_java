@@ -54,8 +54,8 @@ public class MotionProcessor {
     }
 
     public Double getSample() {
-        Double degree = quaternionToDegree(ahrs.getQ());
-//        degreeBuffer.add(new DoubleTimeStampedValue(degree));
+        Double degree = 90 + quaternionToDegree(ahrs.getQ());
+        degreeBuffer.add(new DoubleTimeStampedValue(degree));
 //        speedBuffer.add(mpu9250.getGyro().getModule());
 //        checkTurn();
         return degree;
@@ -105,14 +105,14 @@ public class MotionProcessor {
     }
 
     public static Double quaternionToDegree(Quaternion q) {
-        Quaternion candidate = Quaternion.multiply(Quaternion.multiply(q, rotationQ), vertQ);
-        if(Math.abs(candidate.getWp()) < 0.2) {
-            if (Math.abs(candidate.getWp()) < Math.abs(closestDelta.getWp())) {
-                closestDelta = candidate;
-                closest = q;
-                System.out.println(candidate);
-            }
-        }
+//        Quaternion candidate = Quaternion.multiply(Quaternion.multiply(q, rotationQ), vertQ);
+//        if(Math.abs(candidate.getWp()) < 0.2) {
+//            if (Math.abs(candidate.getWp()) < Math.abs(closestDelta.getWp())) {
+//                closestDelta = candidate;
+//                closest = q;
+//                System.out.println(candidate);
+//            }
+//        }
         return Quaternion.getYProjectionDegree(Quaternion.multiply(q, rotationQ));
     }
 }
