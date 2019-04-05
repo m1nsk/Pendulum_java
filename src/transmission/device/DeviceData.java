@@ -13,13 +13,13 @@ import java.util.Map;
 @Setter
 public class DeviceData{
     private static final Integer LED_NUM = 144;
-    private static final Integer BRIGHTNESS = 100;
+    private static final Integer OFFSET = 144;
+    private static final Integer BRIGHTNESS = 10;
     private Map<String, String> props = new HashMap<>();
     private List<File> images = new ArrayList<>();
 
     public DeviceData() {
     }
-
 
     public void addToImageList(List<File> images) {
         this.images.addAll(images);
@@ -41,9 +41,14 @@ public class DeviceData{
         props.put("brightness", value.toString());
     }
 
+    public Integer getOffset() {
+        return Integer.parseInt(props.getOrDefault("offset", OFFSET.toString()));
+    }
+
     public void clear() {
         this.images.clear();
         props.put("ledNum", LED_NUM.toString());
         props.put("brightness", BRIGHTNESS.toString());
+        props.put("offset", OFFSET.toString());
     }
 }

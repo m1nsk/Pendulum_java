@@ -78,6 +78,7 @@ public class ProcessConnectionThread implements Runnable{
     private void saveDeviceDataToStorage(DeviceData deviceData) throws IOException {
         device.setImageList(deviceData.getImages());
         device.setLedNum(deviceData.getLedNum());
+        device.setOffset(deviceData.getOffset());
         device.setBrightness(deviceData.getBrightness());
         device.saveToStorage();
     }
