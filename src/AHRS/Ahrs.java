@@ -37,7 +37,7 @@ public class Ahrs {
         q2 = 0;
         q3 = 0;
         twoKi = 0;
-        twoKp = 2;
+        twoKp = 0.2f;
     }
 
     public void imuLoop() throws InterruptedException, IOException {
@@ -177,7 +177,8 @@ public class Ahrs {
 
         //-------------------------------------------------------------------------
         System.out.println("Beginning Gyro calibration...\n");
-        for (int i = 0; i < 50; i++) {
+        int times = 50;
+        for (int i = 0; i < times; i++) {
             sensor.updateSensorData();
             TimestampedData3D gyr = sensor.getGyro();
             gx = gyr.getX();
@@ -194,9 +195,9 @@ public class Ahrs {
 
             Thread.sleep(10);
         }
-        offset[0] /= 50;
-        offset[1] /= 50;
-        offset[2] /= 50;
+        offset[0] /= times;
+        offset[1] /= times;
+        offset[2] /= times;
         
         System.out.println("Offsets are: " + offset[0] + " " + offset[1] + " " + offset[2]);
 

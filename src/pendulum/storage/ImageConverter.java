@@ -76,13 +76,13 @@ public class ImageConverter {
     }
 
     private int polarConverter(int a, int l, BufferedImage bImg) {
-        l = l + offset;
+        l = l + offset * 144;
         int DELTA_X = xSize / 2;
         int x = (int) (DELTA_X - l * Math.cos(Math.toRadians((float)a / polarYSize * 180)));
         if (x < 0 || x >= xSize) {
             return BLACK_PIXEL;
         } else {
-            int y = (int) (l * Math.sin(Math.toRadians((float)a / polarYSize * 180)) - offset);
+            int y = (int) (l * Math.sin(Math.toRadians((float)a / polarYSize * 180)) - offset * 144);
             if (y < 0 || y >= ySize)
                 return BLACK_PIXEL;
             return bImg.getRGB(x, bImg.getHeight() - y - 1);
