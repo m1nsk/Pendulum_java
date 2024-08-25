@@ -10,12 +10,11 @@ import transmission.device.Device;
 import transmission.device.DeviceData;
 
 import javax.microedition.io.StreamConnection;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ProcessConnectionThread implements Runnable{
+public class ProcessConnectionThread implements Runnable {
 
     private StreamConnection mConnection;
 

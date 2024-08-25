@@ -14,7 +14,9 @@ import pendulum.storage.Impl.ImgListStorageImpl;
 import transmission.device.Device;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j(topic = "PENDULUM")
 public class Pendulum implements Runnable {
@@ -62,6 +64,7 @@ public class Pendulum implements Runnable {
                 }
             }
         } catch (Exception e) {
+            log.error(Arrays.stream(e.getStackTrace()).collect(Collectors.toList()).toString());
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }

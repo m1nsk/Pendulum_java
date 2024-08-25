@@ -1,13 +1,9 @@
 package pendulum.stateMachine.Impl;
 
-import observer.EventListener;
-import observer.EventType;
+import observer.*;
 import pendulum.display.ImgDisplay;
 import pendulum.stateMachine.PendulumStateMachine;
 import pendulum.storage.ImgListStorage;
-import observer.Command;
-import observer.CommandQueue;
-import observer.CommandType;
 
 import java.io.IOException;
 
@@ -23,7 +19,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
 
     @Override
     public void readNewSample(Double degree) throws IOException {
-//        System.out.println(degree);
+        System.out.println(degree);
         displayLine(degree);
     }
 

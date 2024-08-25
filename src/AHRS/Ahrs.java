@@ -5,8 +5,9 @@
  */
 package AHRS;
 
-import devices.sensors.Mpu9250Interface;
+import devices.sensors.MpuInterface;
 import devices.sensors.dataTypes.TimestampedData3D;
+
 import java.io.IOException;
 
 /**
@@ -15,11 +16,12 @@ import java.io.IOException;
  */
 public class Ahrs {
 
-    Mpu9250Interface sensor = null;
+    private final MpuInterface sensor;
     private float maxdt;
     private float mindt = 0.01f;
     private boolean isFirst = false;
-    private long previoustime, currenttime;
+    private long previousTime;
+    private long currentTime;
     private final static float G_SI = 9.80665f;
     private final static float PI = 3.14159f;
     private float gyroOffset[] = new float[3];
@@ -30,7 +32,7 @@ public class Ahrs {
     private float integralFBy;
     private float integralFBz;
 
-    public Ahrs(Mpu9250Interface sensor) {
+    public Ahrs(MpuInterface sensor) {
         this.sensor = sensor;
         q0 = 1;
         q1 = 0;
@@ -45,14 +47,14 @@ public class Ahrs {
         float dt;        // Timing data
 
         //----------------------- Calculate delta time ----------------------------
-        previoustime = currenttime;
-        currenttime = System.nanoTime() / 1000;
-        dt = (float) ((currenttime - previoustime) / 1000000.0);
+        previousTime = currentTime;
+        currentTime = System.nanoTime() / 1000;
+        dt = (float) ((currentTime - previousTime) / 1000000.0);
         if (dt < 1.0 / 1300.0) {
             Thread.sleep((long) ((1 / 1300 - dt) * 1000000));
         }
-        currenttime = System.nanoTime() / 1000;
-        dt = (float) ((currenttime - previoustime) / 1000000.0);
+        currentTime = System.nanoTime() / 1000;
+        dt = (float) ((currentTime - previousTime) / 1000000.0);
 
         //-------- Read raw measurements from the MPU and update Ahrs --------------
         updateIMU(dt);

@@ -1,5 +1,7 @@
 package devices.sensorImplementations.MPU9250;
 
+import devices.sensors.AccScale;
+import devices.sensors.GyrScale;
 import devices.Protocol.ProtocolInterface;
 import devices.sensors.NineDOF;
 import devices.sensors.dataTypes.TimestampedData3D;

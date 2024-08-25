@@ -2,7 +2,7 @@ package devices.sensors;
 
 import devices.sensors.dataTypes.TimestampedData3D;
 
-public abstract class NineDOF implements Mpu9250Interface
+public abstract class NineDOF implements MpuInterface
 {
     protected TimestampedData3D acc;
     protected TimestampedData3D gyr;

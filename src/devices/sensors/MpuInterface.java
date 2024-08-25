@@ -6,13 +6,14 @@
 package devices.sensors;
 
 import devices.sensors.dataTypes.TimestampedData3D;
+
 import java.io.IOException;
 
 /**
  *
  * @author minsk
  */
-public interface Mpu9250Interface {
+public interface MpuInterface {
 
     void initialize() throws IOException, InterruptedException ;
 

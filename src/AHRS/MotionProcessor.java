@@ -4,7 +4,7 @@ import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CFactory;
 import devices.Protocol.ProtocolInterface;
 import devices.Protocol.i2c.Pi4jI2CDevice;
-import devices.sensorImplementations.MPU9250.MPU9250;
+import devices.mpu6050.MPU6050;
 import devices.sensors.NineDOF;
 import devices.sensors.dataTypes.CircularArrayRing;
 import lombok.AllArgsConstructor;
@@ -42,7 +42,7 @@ public class MotionProcessor {
 //                    params.getSpiAPA102Speed(),
 //                    SpiMode.MODE_0));
 
-        mpu9250 = new MPU9250(
+        mpu9250 = new MPU6050(
                 protocolInterfaceI2C,
                 params.getDisplayFrequency());
         ahrs = new Ahrs(mpu9250);
