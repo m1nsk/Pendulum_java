@@ -42,7 +42,7 @@ public class WaitThread implements Runnable{
 			UUID uuid = new UUID("04c6093b00001000800000805f9b34fb", false);
 			log.info(uuid.toString());
 			
-            String url = "btspp://localhost:" + uuid.toString() + ";name=RemoteBluetooth";
+            String url = "btspp://localhost:" + uuid + ";name=RemoteBluetooth";
             notifier = (StreamConnectionNotifier)Connector.open(url);
         } catch (BluetoothStateException e) {
         	log.error("Bluetooth is not turned on.");

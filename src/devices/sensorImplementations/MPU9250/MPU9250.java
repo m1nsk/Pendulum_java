@@ -94,7 +94,8 @@ public class MPU9250 extends NineDOF {
             try {
                 rawData = device.read(address, regCount * 2);
             } catch (IOException ignored) {
-                System.out.println(++counter);
+//                System.out.println(++counter);
+                ++counter;
             }
         }
         short[] registers = new short[regCount];

@@ -9,6 +9,7 @@ import transmission.Protocol.*;
 import transmission.device.Device;
 import transmission.device.DeviceData;
 
+import javax.bluetooth.RemoteDevice;
 import javax.microedition.io.StreamConnection;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +27,8 @@ public class ProcessConnectionThread implements Runnable {
 
     private Device device = Device.getInstance();
 
-    public ProcessConnectionThread(StreamConnection connection, EventManager eventManager)
-    {  this.eventManager = eventManager;
+    public ProcessConnectionThread(StreamConnection connection, EventManager eventManager) {
+        this.eventManager = eventManager;
         mConnection = connection;
         deviceDataConverter = new DeviceDataConverter(new StorageFileGetter().getStorage());
         deviceCommandConverter = new DeviceCommandConverter();
@@ -37,6 +38,9 @@ public class ProcessConnectionThread implements Runnable {
     public void run() {
         try (InputStream inputStream = mConnection.openInputStream();
              OutputStream outputStream = mConnection.openOutputStream()) {
+            RemoteDevice dev = RemoteDevice.getRemoteDevice(mConnection);
+            System.out.println("Remote device address: " + dev.getBluetoothAddress());
+            System.out.println("Remote device name: " + dev.getFriendlyName(true));
             outputStream.write("Hello".getBytes());
             outputStream.flush();
             boolean bytesFlag = false;
@@ -48,7 +52,7 @@ public class ProcessConnectionThread implements Runnable {
 
             while (counter < bytes.length) {
                 int command = inputStream.read(buffer);
-                if(!bytesFlag) {
+                if (!bytesFlag) {
                     bundleInfo = DataTypeHelper.getBundleInfo(buffer);
                     bytes = new byte[bundleInfo.getFullSize()];
                     bytesFlag = true;
@@ -60,11 +64,11 @@ public class ProcessConnectionThread implements Runnable {
             outputStream.write("Hello".getBytes());
             outputStream.flush();
 
-            if(bundleInfo.getType().equals(DataType.DATA)) {
+            if (bundleInfo.getType().equals(DataType.DATA)) {
                 DeviceData deviceData = deviceDataConverter.bytesToDeviceData(bytes);
                 saveDeviceDataToStorage(deviceData);
                 eventManager.notify(EventType.STORAGE_UPDATED);
-            } else if(bundleInfo.getType().equals(DataType.COMMAND)) {
+            } else if (bundleInfo.getType().equals(DataType.COMMAND)) {
                 Command command = deviceCommandConverter.bytesToCommand(bytes);
                 CommandQueue.offer(command);
                 eventManager.notify(EventType.MESSAGE_RECEIVE);

@@ -19,7 +19,7 @@ public class PendulumStateMachineImpl implements PendulumStateMachine, EventList
 
     @Override
     public void readNewSample(Double degree) throws IOException {
-        System.out.println(degree);
+//        System.out.println(degree);
         displayLine(degree);
     }
 

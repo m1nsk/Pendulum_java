@@ -16,7 +16,7 @@ public class DataTypeHelper {
                 .subList(1, params.size())
                 .stream()
                 .map(ConvertorUtils::tryParseInt)
-                .reduce((sum, item) -> sum + item).orElse(null);
+                .reduce(Integer::sum).orElse(null);
         if(fullSize == null)
             throw new Exception("bad data request");
         fullSize = paramsString.getBytes().length + fullSize + 1;
